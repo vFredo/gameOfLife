@@ -61,7 +61,9 @@ func (view *View) readInput() {
 		} else if ev.Rune() == ' ' {
 			view.game.Start = !view.game.Start
 		} else if ev.Rune() == 'l' {
-			view.game.Step()
+			if !view.game.Start {
+				view.game.Step()
+			}
 		}
 	case *tcell.EventMouse:
 		switch ev.Buttons() {
