@@ -44,10 +44,6 @@ func (view *View) initScreen() {
 
 // Control key strokes and mouse cliks events
 func (view *View) readInput() {
-	quit := func() {
-		view.screen.Fini()
-		os.Exit(0)
-	}
 	// Poll event catch events on the buffer
 	ev := view.screen.PollEvent()
 
@@ -57,7 +53,8 @@ func (view *View) readInput() {
 		view.screen.Sync()
 	case *tcell.EventKey:
 		if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC || ev.Rune() == 'q' {
-			quit()
+			view.screen.Fini()
+			os.Exit(0)
 		} else if ev.Rune() == ' ' {
 			view.game.Start = !view.game.Start
 		} else if ev.Rune() == 'l' {
