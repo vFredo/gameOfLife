@@ -15,6 +15,7 @@ var (
 	DefaultStyle    = tcell.StyleDefault.Background(tcell.ColorReset).Foreground(tcell.ColorReset)
 )
 
+// View structure that has the game itself and the screen that everything is render
 type View struct {
 	screen tcell.Screen
 	game   GameOfLife

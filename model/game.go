@@ -11,6 +11,7 @@ const (
 	DEAD  = 0
 )
 
+// Structure that has everything that it's need it to play the game
 type GameOfLife struct {
 	X          int
 	Y          int
@@ -36,7 +37,7 @@ func (game *GameOfLife) Init(x int, y int) {
 func countAlive(x int, y int, rows int, cols int, board [][]int) int {
 	totalNeighbors := 0
 
-	// Getting the total of neighbors that has the cell on field[x][y]
+	// Getting the total of neighbors that has the cell on board[x][y]
 	for i := -1; i < 2; i++ {
 		for j := -1; j < 2; j++ {
 			if x+i < rows && x+i >= 0 && y+j < cols && y+j >= 0 && board[x+i][y+j] == ALIVE {
@@ -54,6 +55,8 @@ func countAlive(x int, y int, rows int, cols int, board [][]int) int {
 
 // Go to the next generation of the game
 func (game *GameOfLife) Step() {
+	// We do this first 2 fors to copy the values on the CurrentGen matrix into the
+	// previousGen, need to search a better solution
 	previousGen := make([][]int, game.X)
 	for i := 0; i < game.X; i++ {
 		previousGen[i] = make([]int, game.Y)
@@ -80,7 +83,7 @@ func (game *GameOfLife) Step() {
 	game.Generation += 1
 }
 
-// Kill all the cells that are in the field/board
+// Kill all the cells that are in the board
 func (game *GameOfLife) ClearGame() {
 	for i := 0; i < game.X; i++ {
 		for j := 0; j < game.Y; j++ {
@@ -90,6 +93,7 @@ func (game *GameOfLife) ClearGame() {
 	game.Generation = 0
 }
 
+// Convert CurrentGen into a string and show it as output
 func stringBoard(board [][]int, x int, y int) {
 	stringBoard := ""
 	for i := 0; i < x; i++ {
