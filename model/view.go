@@ -66,10 +66,8 @@ func (view *View) readInput() {
 				os.Exit(0)
 			} else if ev.Rune() == ' ' {
 				view.game.Start = !view.game.Start
-			} else if ev.Key() == tcell.KeyEnter {
-				if !view.game.Start {
-					view.game.Step()
-				}
+			} else if ev.Key() == tcell.KeyEnter && !view.game.Start {
+				view.game.Step()
 			} else if ev.Rune() == 'h' {
 				view.hideMenu = !view.hideMenu
 			}
