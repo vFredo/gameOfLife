@@ -55,7 +55,7 @@ func (game *GameOfLife) Resize(x int, y int) {
 	game.CurrentGen = newBoard
 }
 
-// Count how many neighbors are alive in the board
+// Count how many neighbors are alive next to the cell
 func countAlive(x int, y int, rows int, cols int, board [][]int) int {
 	totalNeighbors := 0
 
