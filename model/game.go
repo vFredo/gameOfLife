@@ -33,13 +33,15 @@ func (game *GameOfLife) Init(x int, y int) {
 	game.Start = false
 }
 
+// Resize board according to the windows size
 func (game *GameOfLife) Resize(x int, y int) {
-
+	// Create the new board
 	newBoard := make([][]int, x)
-	for i := 0; i < game.X; i++ {
+	for i := range newBoard {
 		newBoard[i] = make([]int, y)
 	}
 
+	// Copy cells from the previous board to the new board
 	for i := 0; i < game.X; i++ {
 		for j := 0; j < game.Y; j++ {
 			if i < x && j < y {
@@ -75,7 +77,7 @@ func countAlive(x int, y int, rows int, cols int, board [][]int) int {
 
 // Go to the next generation of the game
 func (game *GameOfLife) Step() {
-	// We do this first 2 fors to copy the values on the CurrentGen matrix into the
+	// We do this first 2 for loops to copy the values on the CurrentGen matrix into the
 	// previousGen, need to search a better solution
 	previousGen := make([][]int, game.X)
 	for i := 0; i < game.X; i++ {
