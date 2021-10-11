@@ -15,6 +15,9 @@ language.
    | `q` or `Esc` or `Ctrl + c`| Exit the game                        |
    | `h`                       | Hide menu                            |
 
+## Inspired
+- [go-life](https://github.com/sachaos/go-life)
+
 ## TODO
 - [] More efficient way to check if a cell is alive or dead
 - [] Make menu information responsive
