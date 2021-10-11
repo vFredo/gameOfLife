@@ -8,10 +8,11 @@ It's not the best but I just did it to learn a little bit more of the Go program
    |          Keybind          |         Description                  |
    | ------------------------- | ------------------------------------ |
    | `Space`                   | Play/Pause the execution             |
-   | `l`                       | Move to the next generation on pause |
-   | `left click`              | Toggle cell dead/alive on pause      |
-   | `right click`             | Clear board                          |
+   | `Enter`                   | Move to the next generation on pause |
+   | `LeftClick`               | Toggle cell dead/alive on pause      |
+   | `RightClick`              | Clear board                          |
    | `q` or `Esc` or `Ctrl + c`| Exit the game                        |
+   | `h`                       | Hide menu                            |
 
 ## TODO
 - [] More efficient way to check if a cell is alive or dead
