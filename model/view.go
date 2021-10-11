@@ -45,41 +45,43 @@ func (view *View) initScreen() {
 
 // Control key strokes and mouse cliks events
 func (view *View) readInput() {
-	// Poll event catch events on the buffer
-	ev := view.screen.PollEvent()
+	for {
+		// Poll event catch events on the buffer
+		ev := view.screen.PollEvent()
 
-	// Process events catch
-	switch ev := ev.(type) {
-	case *tcell.EventResize:
-		view.screen.Sync()
-	case *tcell.EventKey:
-		if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC || ev.Rune() == 'q' {
-			view.screen.Fini()
-			os.Exit(0)
-		} else if ev.Rune() == ' ' {
-			view.game.Start = !view.game.Start
-		} else if ev.Rune() == 'l' {
-			if !view.game.Start {
-				view.game.Step()
-			}
-		}
-	case *tcell.EventMouse:
-		switch ev.Buttons() {
-		case tcell.Button1:
-			x, y := ev.Position()
-			// If the game is in pause, let it modified, else don't
-			if !view.game.Start {
-				rows, cols := y, x/2
-				if rows < view.game.X && cols < view.game.Y {
-					if view.game.CurrentGen[rows][cols] == ALIVE {
-						view.game.CurrentGen[rows][cols] = DEAD
-					} else {
-						view.game.CurrentGen[rows][cols] = ALIVE
-					}
+		// Process events catch
+		switch ev := ev.(type) {
+		case *tcell.EventResize:
+			view.screen.Sync()
+		case *tcell.EventKey:
+			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC || ev.Rune() == 'q' {
+				view.screen.Fini()
+				os.Exit(0)
+			} else if ev.Rune() == ' ' {
+				view.game.Start = !view.game.Start
+			} else if ev.Rune() == 'l' {
+				if !view.game.Start {
+					view.game.Step()
 				}
 			}
-		case tcell.Button2:
-			view.game.ClearGame()
+		case *tcell.EventMouse:
+			switch ev.Buttons() {
+			case tcell.Button1:
+				x, y := ev.Position()
+				// If the game is in pause, let it modified, else don't
+				if !view.game.Start {
+					rows, cols := y, x/2
+					if rows < view.game.X && cols < view.game.Y {
+						if view.game.CurrentGen[rows][cols] == ALIVE {
+							view.game.CurrentGen[rows][cols] = DEAD
+						} else {
+							view.game.CurrentGen[rows][cols] = ALIVE
+						}
+					}
+				}
+			case tcell.Button2:
+				view.game.ClearGame()
+			}
 		}
 	}
 }
@@ -88,7 +90,7 @@ func (view *View) readInput() {
 func (view *View) displayGame() {
 	view.screen.Clear()
 
-	// Death: Background color, AlivePause: Blue, AlivePlay: Yellow
+	// Death: Background color, AlivePause: blue, AlivePlay: yellow
 	for i := 0; i < view.game.X; i++ {
 		for j := 0; j < view.game.Y; j++ {
 			if view.game.CurrentGen[i][j] == ALIVE && view.game.Start {
@@ -111,9 +113,9 @@ func (view *View) Loop() {
 
 	framesPerSecond := 15
 	sleepTime := time.Duration(1000/framesPerSecond) * time.Millisecond
-	for {
-		view.readInput()
+	go view.readInput()
 
+	for {
 		if view.game.Start {
 			view.game.Step()
 			time.Sleep(sleepTime)
