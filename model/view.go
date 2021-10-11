@@ -117,8 +117,8 @@ func (view *View) displayGame() {
 	}
 }
 
-// helper that takes the string (info) and pos (x, y) to put it on the screen
-func (view *View) prepareStringInfo(x int, y int, info string) {
+// Helper that takes the string (info) and pos (x, y) to put it on the screen
+func (view *View) renderInfo(x int, y int, info string) {
 	for i, byte := range info {
 		view.screen.SetCell(x+i, y, InfoStyle, byte)
 	}
@@ -127,11 +127,11 @@ func (view *View) prepareStringInfo(x int, y int, info string) {
 // Information show in the menu
 func (view *View) displayInfo() {
 	width, height := view.screen.Size()
-	view.prepareStringInfo(0, 0, " ENTER: next generation, SPC: play/pause, q/ESC/Ctrl-C: quit, h: hide menu ")
-	view.prepareStringInfo(0, 1, " LeftClick: switch state cell, RightClick: clear board ")
+	view.renderInfo(0, 0, " ENTER: next generation, SPC: play/pause, q/ESC/Ctrl-C: quit, h: hide menu ")
+	view.renderInfo(0, 1, " LeftClick: switch state cell, RightClick: clear board ")
 
 	generation := fmt.Sprintf(" Generation: %d ", view.game.Generation)
-	view.prepareStringInfo(width-len(generation), height-1, generation)
+	view.renderInfo(width-len(generation), height-1, generation)
 }
 
 // Infinite loop for the terminal view buffer where the game is executed

@@ -1,7 +1,8 @@
 # Game of Life
 
 This is yet another Conway's Game of Life interpretation made in Golang on the terminal.
-It's not the best but I just did it to learn a little bit more of the Go programing language.
+It's not the best but I just did it to learn a little bit more of the Go programing
+language.
 
 ## Keybinds
 
@@ -16,4 +17,5 @@ It's not the best but I just did it to learn a little bit more of the Go program
 
 ## TODO
 - [] More efficient way to check if a cell is alive or dead
+- [] Make menu information responsive
 
