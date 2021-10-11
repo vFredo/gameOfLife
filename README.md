@@ -14,8 +14,5 @@ It's not the best but I just did it to learn a little bit more of the Go program
    | `q` or `Esc` or `Ctrl + c`| Exit the game                        |
 
 ## TODO
-- [] When all the cells die restart to a new instance of the game
-- [] use go rutines for the keyboard/mouse events and the loop of the game
 - [] More efficient way to check if a cell is alive or dead
-- [] Fix when the game is play the cells pause for some frames and then update fast
 
