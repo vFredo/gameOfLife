@@ -53,6 +53,8 @@ func (view *View) readInput() {
 		switch ev := ev.(type) {
 		case *tcell.EventResize:
 			view.screen.Sync()
+			width, height := view.screen.Size()
+			view.game.Resize(height, width/2)
 		case *tcell.EventKey:
 			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC || ev.Rune() == 'q' {
 				view.screen.Fini()

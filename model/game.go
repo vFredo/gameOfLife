@@ -33,6 +33,26 @@ func (game *GameOfLife) Init(x int, y int) {
 	game.Start = false
 }
 
+func (game *GameOfLife) Resize(x int, y int) {
+
+	newBoard := make([][]int, x)
+	for i := 0; i < game.X; i++ {
+		newBoard[i] = make([]int, y)
+	}
+
+	for i := 0; i < game.X; i++ {
+		for j := 0; j < game.Y; j++ {
+			if i < x && j < y {
+				newBoard[i][j] = game.CurrentGen[i][j]
+			}
+		}
+	}
+
+	game.X = x
+	game.Y = y
+	game.CurrentGen = newBoard
+}
+
 // Count how many neighbors are alive in the board
 func countAlive(x int, y int, rows int, cols int, board [][]int) int {
 	totalNeighbors := 0
