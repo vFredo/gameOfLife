@@ -54,12 +54,10 @@ func (view *View) readInput() {
 
 		// Process events catch
 		switch ev := ev.(type) {
-		// Resize window event
 		case *tcell.EventResize:
 			view.screen.Sync()
 			width, height := view.screen.Size()
 			view.game.Resize(height, width/2)
-			// Keyboard events
 		case *tcell.EventKey:
 			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC || ev.Rune() == 'q' {
 				view.screen.Fini()
@@ -71,20 +69,17 @@ func (view *View) readInput() {
 			} else if ev.Rune() == 'h' {
 				view.hideMenu = !view.hideMenu
 			}
-			// Mouse events
 		case *tcell.EventMouse:
 			switch ev.Buttons() {
 			case tcell.Button1:
 				x, y := ev.Position()
+				rows, cols := y, x/2
 				// If the game is in pause, let it modified, else don't
-				if !view.game.Start {
-					rows, cols := y, x/2
-					if rows < view.game.X && cols < view.game.Y {
-						if view.game.CurrentGen[rows][cols] == ALIVE {
-							view.game.CurrentGen[rows][cols] = DEAD
-						} else {
-							view.game.CurrentGen[rows][cols] = ALIVE
-						}
+				if rows < view.game.X && cols < view.game.Y && !view.game.Start {
+					if view.game.CurrentGen[rows][cols] == ALIVE {
+						view.game.CurrentGen[rows][cols] = DEAD
+					} else {
+						view.game.CurrentGen[rows][cols] = ALIVE
 					}
 				}
 			case tcell.Button2:
