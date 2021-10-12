@@ -1,10 +1,5 @@
 package model
 
-import (
-	"fmt"
-	"strconv"
-)
-
 // Consts that tells if a cell is dead or alive
 const (
 	ALIVE = 1
@@ -71,13 +66,12 @@ func countAlive(x int, y int, rows int, cols int, board [][]int) int {
 	// So we have to deleted it, this happens beacuse i and j go from -1 to 1
 	// So there's a case where i = 0 and j = 0, in that case we are adding the cell perse
 	totalNeighbors -= board[x][y]
-
 	return totalNeighbors
 }
 
 // Go to the next generation of the game
 func (game *GameOfLife) Step() {
-	// We do this first 2 for loops to copy the values on the CurrentGen matrix into
+	// We do this first two  loops to copy the values on the CurrentGen matrix into
 	// the previousGen, need to search a better solution
 	previousGen := make([][]int, game.X)
 	for i := 0; i < game.X; i++ {
@@ -113,17 +107,4 @@ func (game *GameOfLife) ClearGame() {
 		}
 	}
 	game.Generation = 0
-}
-
-// Convert CurrentGen into a string and show it as output
-func stringBoard(board [][]int, x int, y int) {
-	stringBoard := ""
-	for i := 0; i < x; i++ {
-		for j := 0; j < y; j++ {
-			stringBoard += strconv.Itoa(board[i][j])
-		}
-		stringBoard += "\n"
-	}
-	stringBoard += "\n"
-	fmt.Println(stringBoard)
 }
