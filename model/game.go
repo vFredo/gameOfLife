@@ -35,7 +35,6 @@ func (game *GameOfLife) Resize(x int, y int) {
 	for i := range newBoard {
 		newBoard[i] = make([]int, y)
 	}
-
 	// Copy cells from the previous board to the new board
 	for i := 0; i < game.X; i++ {
 		for j := 0; j < game.Y; j++ {
@@ -44,7 +43,6 @@ func (game *GameOfLife) Resize(x int, y int) {
 			}
 		}
 	}
-
 	game.X = x
 	game.Y = y
 	game.CurrentGen = newBoard
@@ -53,10 +51,9 @@ func (game *GameOfLife) Resize(x int, y int) {
 // Count how many neighbors are alive next to the cell in (x,y)
 func countAlive(x int, y int, rows int, cols int, board [][]int) int {
 	totalNeighbors := 0
-
 	// Getting the total of neighbors that has the cell on board[x][y]
-	for i := -1; i < 2; i++ {
-		for j := -1; j < 2; j++ {
+	for i := -1; i <= 1; i++ {
+		for j := -1; j <= 1; j++ {
 			if x+i < rows && x+i >= 0 && y+j < cols && y+j >= 0 && board[x+i][y+j] == ALIVE {
 				totalNeighbors += board[x+i][y+j]
 			}

@@ -40,9 +40,8 @@ func (view *View) initScreen() {
 	view.screen.EnableMouse()
 	view.screen.Clear()
 
-	width, height := view.screen.Size()
-
 	// Initialize Game
+	width, height := view.screen.Size()
 	view.game.Init(height, width/2)
 }
 
@@ -51,8 +50,7 @@ func (view *View) readInput() {
 	for {
 		// Poll event catch events on the buffer
 		ev := view.screen.PollEvent()
-
-		// Process events catch
+		// Process events
 		switch ev := ev.(type) {
 		case *tcell.EventResize:
 			view.screen.Sync()
@@ -92,7 +90,6 @@ func (view *View) readInput() {
 // How each cell is render on the terminal buffer
 func (view *View) displayGame() {
 	view.screen.Clear()
-
 	// Death: Background color, AlivePause: blue, AlivePlay: yellow
 	for i := 0; i < view.game.X; i++ {
 		for j := 0; j < view.game.Y; j++ {
@@ -122,9 +119,8 @@ func (view *View) displayInfo() {
 	width, height := view.screen.Size()
 	view.renderInfo(0, 0, " ENTER: next generation, SPC: play/pause, q/ESC/Ctrl-C: quit, h: hide menu ")
 	view.renderInfo(0, 1, " LeftClick: switch state cell, RightClick: clear board ")
-
-	generation := fmt.Sprintf(" Generation: %d ", view.game.Generation)
-	view.renderInfo(width-len(generation), height-1, generation)
+	genString := fmt.Sprintf(" Generation: %d ", view.game.Generation)
+	view.renderInfo(width-len(genString), height-1, genString)
 }
 
 // Infinite loop for the terminal view buffer where the game is executed
