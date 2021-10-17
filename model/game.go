@@ -28,7 +28,7 @@ func (game *GameOfLife) Init(x int, y int) {
 	game.Start = false
 }
 
-// Resize board according to the windows size
+// Resize board according to the current width and height of the window (x,y)
 func (game *GameOfLife) Resize(x int, y int) {
 	// Create the new board
 	newBoard := make([][]int, x)

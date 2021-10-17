@@ -24,13 +24,13 @@ type View struct {
 	hideMenu bool
 }
 
-// Initialize screen view and game
+// Initialize screen view and game board
 func (view *View) initScreen() {
-	s, err := tcell.NewScreen()
+	screenInstance, err := tcell.NewScreen()
 	if err != nil {
 		log.Fatalf("%+v", err)
 	}
-	view.screen = s
+	view.screen = screenInstance
 
 	if err := view.screen.Init(); err != nil {
 		log.Fatalf("%+v", err)
@@ -45,7 +45,7 @@ func (view *View) initScreen() {
 	view.game.Init(height, width/2)
 }
 
-// Control input events
+// Control input (mouse/keyboard) events on the screen
 func (view *View) readInput() {
 	for {
 		// Poll event catch events on the buffer
@@ -87,7 +87,7 @@ func (view *View) readInput() {
 	}
 }
 
-// How each cell is render on the terminal buffer
+// How each cell is draw on the screen
 func (view *View) displayGame() {
 	view.screen.Clear()
 	// Death: Background color, AlivePause: blue, AlivePlay: yellow
@@ -107,14 +107,14 @@ func (view *View) displayGame() {
 	}
 }
 
-// Helper that takes the string (info) and pos (x, y) to put it on the screen
+// Helper method that takes the string (info) and pos (x, y) to put it on the screen
 func (view *View) renderInfo(x int, y int, info string) {
 	for i, byte := range info {
 		view.screen.SetCell(x+i, y, InfoStyle, byte)
 	}
 }
 
-// Information show in the menu
+// Information shown in the menu
 func (view *View) displayInfo() {
 	width, height := view.screen.Size()
 	view.renderInfo(0, 0, " ENTER: next generation, SPC: play/pause, q/ESC/Ctrl-C: quit, h: hide menu ")
@@ -126,9 +126,9 @@ func (view *View) displayInfo() {
 // Infinite loop for the terminal view buffer where the game is executed
 func (view *View) Loop() {
 	view.initScreen()
-
 	framesPerSecond := 15
 	sleepTime := time.Duration(1000/framesPerSecond) * time.Millisecond
+
 	go view.readInput()
 
 	for {
