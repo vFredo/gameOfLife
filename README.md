@@ -19,6 +19,5 @@ language.
 - [go-life](https://github.com/sachaos/go-life)
 
 ## TODO
-- [] More efficient way to check if a cell is alive or dead
-- [] Make menu information responsive
-
+- [ ] More efficient way to check if a cell is alive or dead
+- [ ] Make menu information responsive
