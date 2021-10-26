@@ -58,6 +58,7 @@ func (view *View) readInput() {
 			view.game.Resize(height, width/2)
 		case *tcell.EventKey:
 			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC || ev.Rune() == 'q' {
+				view.screen.Clear()
 				view.screen.Fini()
 				os.Exit(0)
 			} else if ev.Rune() == ' ' {
