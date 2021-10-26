@@ -21,3 +21,4 @@ language.
 ## TODO
 - [ ] More efficient way to check if a cell is alive or dead
 - [ ] Make menu information responsive
+- [ ] Make presets for the game like the glider gun etc...
