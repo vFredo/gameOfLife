@@ -72,13 +72,13 @@ func (view *View) readInput() {
 			switch ev.Buttons() {
 			case tcell.Button1:
 				x, y := ev.Position()
-				rows, cols := y, x/2
+				row, col := y, x/2
 				// If the game is in pause, let it modified, else don't
-				if rows < view.game.X && cols < view.game.Y && !view.game.Start {
-					if view.game.CurrentGen[rows][cols] == ALIVE {
-						view.game.CurrentGen[rows][cols] = DEAD
+				if row < view.game.X && col < view.game.Y && !view.game.Start {
+					if view.game.CurrentGen[row][col] == ALIVE {
+						view.game.CurrentGen[row][col] = DEAD
 					} else {
-						view.game.CurrentGen[rows][cols] = ALIVE
+						view.game.CurrentGen[row][col] = ALIVE
 					}
 				}
 			case tcell.Button2:
