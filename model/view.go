@@ -25,7 +25,7 @@ type View struct {
 }
 
 // Initialize screen view and game board
-func (view *View) InitScreen(birthCell int, under int, over int) {
+func (view *View) InitScreen(birth int, under int, over int) {
 	screenInstance, err := tcell.NewScreen()
 	if err != nil {
 		log.Fatalf("%+v", err)
@@ -42,7 +42,7 @@ func (view *View) InitScreen(birthCell int, under int, over int) {
 
 	// Initialize Game
 	width, height := view.screen.Size()
-	view.game.Init(height, width/2, birthCell, under, over)
+	view.game.Init(height, width/2, birth, under, over)
 }
 
 // Control input (mouse/keyboard) events on the screen
