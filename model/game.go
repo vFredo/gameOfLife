@@ -19,7 +19,7 @@ type GameOfLife struct {
 }
 
 // Initialize a new game with cero cells alive
-func (game *GameOfLife) Init(x int, y int, birthCell int, under int, over int) {
+func (game *GameOfLife) Init(x int, y int) {
 	field := make([][]int, x)
 	for i := range field {
 		field[i] = make([]int, y)
@@ -29,9 +29,6 @@ func (game *GameOfLife) Init(x int, y int, birthCell int, under int, over int) {
 	game.CurrentGen = field
 	game.Generation = 0
 	game.Start = false
-	game.BirthCell = birthCell
-	game.UnderPopulation = under
-	game.OverPopulation = over
 }
 
 // Resize board according to the current width and height of the window (x,y)
