@@ -16,6 +16,22 @@ More about the game [Game of Life](https://en.wikipedia.org/wiki/Conway's_Game_o
    | `q` or `Esc` or `Ctrl + c` | Exit the game                        |
    | `h`                        | Hide menu                            |
 
+## Execution
+Create the executable with:
+```bash
+go build
+```
+There are flags so you can especify the behavior of the game. You can see all the
+option by doing.
+
+```bash
+# On the executable
+./gameOfLife -h
+
+# On runtime
+go run ./main.go -h
+```
+
 ## TODO
 - [ ] More efficient way to check if a cell is alive or dead
 - [ ] Make presets like the glider, glider gun, pulsar etc...
