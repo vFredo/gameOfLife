@@ -35,7 +35,6 @@ go run ./main.go -h
 ## TODO
 - [ ] More efficient way to check if a cell is alive or dead
 - [ ] Make presets like the glider, glider gun, pulsar etc...
-- [x] Make available other rules, not only B3S23 (Birth: 3, Survival: more than 2 and less than 3)
 - [ ] Make menu information responsive
 
 ## Inspired
