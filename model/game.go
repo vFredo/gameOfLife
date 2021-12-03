@@ -8,15 +8,18 @@ const (
 
 // Structure that has everything that it's need it to play the game
 type GameOfLife struct {
-	X          int
-	Y          int
-	Start      bool
-	Generation uint
-	CurrentGen [][]int
+	X               int
+	Y               int
+	Start           bool
+	Generation      uint
+	CurrentGen      [][]int
+	BirthCell       int
+	OverPopulation  int
+	UnderPopulation int
 }
 
 // Initialize a new game with cero cells alive
-func (game *GameOfLife) Init(x int, y int) {
+func (game *GameOfLife) Init(x int, y int, birthCell int, under int, over int) {
 	field := make([][]int, x)
 	for i := range field {
 		field[i] = make([]int, y)
@@ -26,6 +29,9 @@ func (game *GameOfLife) Init(x int, y int) {
 	game.CurrentGen = field
 	game.Generation = 0
 	game.Start = false
+	game.BirthCell = birthCell
+	game.UnderPopulation = under
+	game.OverPopulation = over
 }
 
 // Resize board according to the current width and height of the window (x,y)
@@ -85,10 +91,10 @@ func (game *GameOfLife) Step() {
 		for j := 0; j < game.Y; j++ {
 			aliveNeighbors := countAlive(i, j, game.X, game.Y, previousGen)
 			if previousGen[i][j] == ALIVE {
-				if aliveNeighbors < 2 || aliveNeighbors > 3 {
+				if aliveNeighbors < game.UnderPopulation || aliveNeighbors > game.OverPopulation {
 					game.CurrentGen[i][j] = DEAD
 				}
-			} else if aliveNeighbors == 3 {
+			} else if aliveNeighbors == game.BirthCell {
 				game.CurrentGen[i][j] = ALIVE
 			}
 		}

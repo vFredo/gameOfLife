@@ -19,7 +19,7 @@ More about the game [Game of Life](https://en.wikipedia.org/wiki/Conway's_Game_o
 ## TODO
 - [ ] More efficient way to check if a cell is alive or dead
 - [ ] Make presets like the glider, glider gun, pulsar etc...
-- [ ] Make available other rules, not only B3S23 (Birth: 3, Survival: 2 or 3)
+- [x] Make available other rules, not only B3S23 (Birth: 3, Survival: more than 2 and less than 3)
 - [ ] Make menu information responsive
 
 ## Inspired

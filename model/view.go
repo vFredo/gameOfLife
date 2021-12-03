@@ -25,7 +25,7 @@ type View struct {
 }
 
 // Initialize screen view and game board
-func (view *View) initScreen() {
+func (view *View) InitScreen(birthCell int, under int, over int) {
 	screenInstance, err := tcell.NewScreen()
 	if err != nil {
 		log.Fatalf("%+v", err)
@@ -42,7 +42,7 @@ func (view *View) initScreen() {
 
 	// Initialize Game
 	width, height := view.screen.Size()
-	view.game.Init(height, width/2)
+	view.game.Init(height, width/2, birthCell, under, over)
 }
 
 // Control input (mouse/keyboard) events on the screen
@@ -125,11 +125,11 @@ func (view *View) displayInfo() {
 }
 
 // Infinite loop for the terminal view buffer where the game is executed
-func (view *View) Loop() {
-	view.initScreen()
+func (view *View) StartLoop() {
 	framesPerSecond := 15
 	sleepTime := time.Duration(1000/framesPerSecond) * time.Millisecond
 
+	// Read input in another process, not the exact same of the game process
 	go view.readInput()
 
 	for {
