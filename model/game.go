@@ -18,7 +18,7 @@ type GameOfLife struct {
 	UnderPopulation int
 }
 
-// Initialize a new game with cero cells alive
+// Initialize a new game with zero cells alive
 func (game *GameOfLife) Init(x int, y int) {
 	field := make([][]int, x)
 	for i := range field {
@@ -63,7 +63,7 @@ func countAlive(x int, y int, rows int, cols int, board [][]int) int {
 		}
 	}
 	// Since we are counting all the neighbors on the for loop we're counting the cell itself
-	// So we have to deleted it, this happens beacuse i and j go from -1 to 1
+	// So we have to deleted it, this happens because i and j go from -1 to 1
 	// So there's a case where i = 0 and j = 0, in that case we are adding the cell perse
 	totalNeighbors -= board[x][y]
 	return totalNeighbors

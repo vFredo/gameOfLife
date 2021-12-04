@@ -64,7 +64,7 @@ func (view *View) readInput() {
 				view.screen.Clear()
 				view.screen.Fini()
 				os.Exit(0)
-			} else if ev.Rune() == ' ' {
+			} else if ev.Rune() == ' ' { // space
 				view.game.Start = !view.game.Start
 			} else if ev.Key() == tcell.KeyEnter && !view.game.Start {
 				view.game.Step()
