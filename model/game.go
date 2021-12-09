@@ -57,15 +57,13 @@ func countAlive(x int, y int, rows int, cols int, board [][]int) int {
 	// Getting the total of neighbors that has the cell on board[x][y]
 	for i := -1; i <= 1; i++ {
 		for j := -1; j <= 1; j++ {
-			if x+i < rows && x+i >= 0 && y+j < cols && y+j >= 0 && board[x+i][y+j] == ALIVE {
+			// So there's a case where i = 0 and j = 0
+			// in that case we are adding the cell itself so we have to ignore it on the iteration
+			if x+i < rows && x+i >= 0 && y+j < cols && y+j >= 0 && board[x+i][y+j] == ALIVE && (j != 0 || i != 0) {
 				totalNeighbors += board[x+i][y+j]
 			}
 		}
 	}
-	// Since we are counting all the neighbors on the for loop we're counting the cell itself
-	// So we have to deleted it, this happens because i and j go from -1 to 1
-	// So there's a case where i = 0 and j = 0, in that case we are adding the cell perse
-	totalNeighbors -= board[x][y]
 	return totalNeighbors
 }
 
