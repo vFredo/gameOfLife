@@ -51,9 +51,9 @@ func (view *View) InitScreen(game GameOfLife) {
 // Control input (mouse/keyboard) events on the screen
 func (view *View) readInput() {
 	for {
-		// Poll event catch events on the buffer
+		// Catch events that are triggered on the buffer
 		ev := view.screen.PollEvent()
-		// Process events
+		// Process each event
 		switch ev := ev.(type) {
 		case *tcell.EventResize:
 			view.screen.Sync()
@@ -73,7 +73,7 @@ func (view *View) readInput() {
 			}
 		case *tcell.EventMouse:
 			switch ev.Buttons() {
-			case tcell.Button1:
+			case tcell.Button1: // left click
 				x, y := ev.Position()
 				row, col := y, x/2
 				// If the game is in pause, let it modified, else don't
@@ -84,7 +84,7 @@ func (view *View) readInput() {
 						view.game.CurrentGen[row][col] = ALIVE
 					}
 				}
-			case tcell.Button2:
+			case tcell.Button2: // right click
 				view.game.ClearGame()
 			}
 		}
@@ -129,10 +129,11 @@ func (view *View) displayInfo() {
 
 // Infinite loop for the terminal view buffer where the game is executed
 func (view *View) StartLoop() {
+	// Get the FPS for executing the game while is on 'play' taking into account the Hz of the screen
 	framesPerSecond := 15
 	sleepTime := time.Duration(1000/framesPerSecond) * time.Millisecond
 
-	// Read input in another process, not the exact same of the game process
+	// Read input in another routine, not the exact same as where the game is executed
 	go view.readInput()
 
 	for {
