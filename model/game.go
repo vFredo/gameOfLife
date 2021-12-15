@@ -51,7 +51,7 @@ func (game *GameOfLife) Resize(x int, y int) {
 	game.CurrentGen = newBoard
 }
 
-// Count how many neighbors are alive next to the cell in (x,y)
+// Count how many neighbors are alive next to the cell in [x][y]
 func countAlive(x int, y int, rows int, cols int, board [][]int) int {
 	totalNeighbors := 0
 	// Getting the total of neighbors that has the cell on board[x][y]
@@ -70,7 +70,7 @@ func countAlive(x int, y int, rows int, cols int, board [][]int) int {
 // Go to the next generation of the game
 func (game *GameOfLife) Step() {
 	// We do this first two  loops to copy the values on the CurrentGen matrix into
-	// the previousGen, need to search a better solution
+	// the previousGen. FIX: need to find a better solution
 	previousGen := make([][]int, game.X)
 	for i := 0; i < game.X; i++ {
 		previousGen[i] = make([]int, game.Y)
@@ -82,6 +82,7 @@ func (game *GameOfLife) Step() {
 		}
 	}
 
+	// Update current generation taking into account the previous generation
 	for i := 0; i < game.X; i++ {
 		for j := 0; j < game.Y; j++ {
 			aliveNeighbors := countAlive(i, j, game.X, game.Y, previousGen)

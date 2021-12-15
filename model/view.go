@@ -17,14 +17,14 @@ var (
 	InfoStyle       = tcell.StyleDefault.Background(tcell.ColorGray).Foreground(tcell.ColorWhite)
 )
 
-// View structure that has the game itself and the screen where everything is render
+// View structure that has the game itself and the screen (terminal buffer) where everything is render
 type View struct {
 	screen   tcell.Screen
 	game     GameOfLife
 	hideMenu bool
 }
 
-// Initialize screen view and game board
+// Initialize screen and game itself
 func (view *View) InitScreen(game GameOfLife) {
 	screenInstance, err := tcell.NewScreen()
 	if err != nil {
@@ -118,7 +118,7 @@ func (view *View) renderInfo(x int, y int, info string) {
 	}
 }
 
-// Information shown in the menu
+// Information shown on the menu
 func (view *View) displayInfo() {
 	width, height := view.screen.Size()
 	view.renderInfo(0, 0, " ENTER: next generation, SPC: play/pause, q/ESC/Ctrl-C: quit, h: hide menu ")
@@ -128,8 +128,8 @@ func (view *View) displayInfo() {
 }
 
 // Infinite loop for the terminal view buffer where the game is executed
-func (view *View) StartLoop() {
-	// Get the FPS for executing the game while is on 'play' taking into account the Hz of the screen
+func (view *View) Run() {
+	// Get the FPS for executing the game while is on 'play' taking into account the refresh rate of the screen
 	framesPerSecond := 15
 	sleepTime := time.Duration(1000/framesPerSecond) * time.Millisecond
 
