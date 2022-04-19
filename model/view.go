@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
@@ -48,7 +49,7 @@ func (view *View) InitScreen(game GameOfLife) {
 }
 
 // Control input (mouse/keyboard) events on the screen
-func (view *View) readInput(done chan bool) {
+func (view *View) readInput() {
 	for {
 		// Catch events that are triggered on the buffer
 		ev := view.screen.PollEvent()
@@ -60,8 +61,11 @@ func (view *View) readInput(done chan bool) {
 			view.game.Resize(height, width/2)
 		case *tcell.EventKey:
 			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC || ev.Rune() == 'q' {
-				done <- true
-				break
+				// Close the screen
+				view.screen.Clear()
+				view.screen.Fini()
+				// Exit the program
+				os.Exit(0)
 			} else if ev.Rune() == ' ' { // space
 				view.game.Start = !view.game.Start
 			} else if ev.Key() == tcell.KeyEnter && !view.game.Start {
@@ -75,8 +79,8 @@ func (view *View) readInput(done chan bool) {
 				x, y := ev.Position()
 				row, col := y, x/2
 				// If the game is in pause, let it modified
-				if row < view.game.Width && col < view.game.Height && !view.game.Start {
-					if view.game.CellState(row, col) == ALIVE {
+				if row < view.game.X && col < view.game.Y && !view.game.Start {
+					if view.game.CellState(row, col) {
 						view.game.ClearCell(row, col)
 					} else {
 						view.game.SetCell(row, col)
@@ -86,7 +90,6 @@ func (view *View) readInput(done chan bool) {
 				view.game.ClearGame()
 			}
 		}
-		done <- false
 	}
 }
 
@@ -94,12 +97,12 @@ func (view *View) readInput(done chan bool) {
 func (view *View) displayGame() {
 	view.screen.Clear()
 	// Death: Background color, AlivePause: blue, AlivePlay: yellow
-	for i := 0; i < view.game.Width; i++ {
-		for j := 0; j < view.game.Height; j++ {
-			if view.game.CellState(i, j) == ALIVE && view.game.Start {
+	for i := 0; i < view.game.X; i++ {
+		for j := 0; j < view.game.Y; j++ {
+			if view.game.CellState(i, j) && view.game.Start {
 				view.screen.SetContent(j*2, i, ' ', nil, PlayStyle)
 				view.screen.SetContent(j*2+1, i, ' ', nil, PlayStyle)
-			} else if view.game.CellState(i, j) == ALIVE {
+			} else if view.game.CellState(i, j) {
 				view.screen.SetContent(j*2, i, ' ', nil, PauseStyle)
 				view.screen.SetContent(j*2+1, i, ' ', nil, PauseStyle)
 			} else {
@@ -133,11 +136,10 @@ func (view *View) Run() {
 	sleepTime := time.Duration(1000/framesPerSecond) * time.Millisecond
 
 	// Read input in another routine
-	done := make(chan bool, 1)
-	go view.readInput(done)
+	go view.readInput()
 
 	// Keep running until the user wants to quit the game
-	for !<-done {
+	for {
 		view.displayGame()
 		if view.game.Start {
 			view.game.Step()
@@ -148,8 +150,4 @@ func (view *View) Run() {
 		// Update screen
 		view.screen.Show()
 	}
-
-	// Close the screen
-	view.screen.Clear()
-	view.screen.Fini()
 }
