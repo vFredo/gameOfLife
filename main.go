@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"os"
 
 	"github.com/fredo0522/gameOfLife/model"
 )
@@ -26,4 +27,7 @@ func main() {
 	view := model.View{}
 	view.InitScreen(game)
 	view.Run()
+
+	// Exit the program
+	os.Exit(0)
 }

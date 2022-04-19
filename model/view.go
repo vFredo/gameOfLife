@@ -3,7 +3,6 @@ package model
 import (
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
@@ -11,10 +10,10 @@ import (
 
 // Styles (uses the terminal colors)
 var (
-	AliveStylePlay  = tcell.StyleDefault.Background(tcell.ColorYellow).Foreground(tcell.ColorReset)
-	AliveStylePause = tcell.StyleDefault.Background(tcell.ColorBlue).Foreground(tcell.ColorReset)
-	DefaultStyle    = tcell.StyleDefault.Background(tcell.ColorReset).Foreground(tcell.ColorReset)
-	InfoStyle       = tcell.StyleDefault.Background(tcell.ColorGray).Foreground(tcell.ColorWhite)
+	PlayStyle    = tcell.StyleDefault.Background(tcell.ColorYellow).Foreground(tcell.ColorReset)
+	PauseStyle   = tcell.StyleDefault.Background(tcell.ColorBlue).Foreground(tcell.ColorReset)
+	DefaultStyle = tcell.StyleDefault.Background(tcell.ColorReset).Foreground(tcell.ColorReset)
+	InfoStyle    = tcell.StyleDefault.Background(tcell.ColorGray).Foreground(tcell.ColorWhite)
 )
 
 // View structure that has the game itself and the screen (terminal buffer) where everything is render
@@ -49,7 +48,7 @@ func (view *View) InitScreen(game GameOfLife) {
 }
 
 // Control input (mouse/keyboard) events on the screen
-func (view *View) readInput() {
+func (view *View) readInput(done chan bool) {
 	for {
 		// Catch events that are triggered on the buffer
 		ev := view.screen.PollEvent()
@@ -61,9 +60,8 @@ func (view *View) readInput() {
 			view.game.Resize(height, width/2)
 		case *tcell.EventKey:
 			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC || ev.Rune() == 'q' {
-				view.screen.Clear()
-				view.screen.Fini()
-				os.Exit(0)
+				done <- true
+				break
 			} else if ev.Rune() == ' ' { // space
 				view.game.Start = !view.game.Start
 			} else if ev.Key() == tcell.KeyEnter && !view.game.Start {
@@ -76,18 +74,19 @@ func (view *View) readInput() {
 			case tcell.Button1: // left click
 				x, y := ev.Position()
 				row, col := y, x/2
-				// If the game is in pause, let it modified, else don't
-				if row < view.game.X && col < view.game.Y && !view.game.Start {
-					if view.game.CurrentGen[row][col] == ALIVE {
-						view.game.CurrentGen[row][col] = DEAD
+				// If the game is in pause, let it modified
+				if row < view.game.Width && col < view.game.Height && !view.game.Start {
+					if view.game.CellState(row, col) == ALIVE {
+						view.game.ClearCell(row, col)
 					} else {
-						view.game.CurrentGen[row][col] = ALIVE
+						view.game.SetCell(row, col)
 					}
 				}
 			case tcell.Button2: // right click
 				view.game.ClearGame()
 			}
 		}
+		done <- false
 	}
 }
 
@@ -95,14 +94,14 @@ func (view *View) readInput() {
 func (view *View) displayGame() {
 	view.screen.Clear()
 	// Death: Background color, AlivePause: blue, AlivePlay: yellow
-	for i := 0; i < view.game.X; i++ {
-		for j := 0; j < view.game.Y; j++ {
-			if view.game.CurrentGen[i][j] == ALIVE && view.game.Start {
-				view.screen.SetContent(j*2, i, ' ', nil, AliveStylePlay)
-				view.screen.SetContent(j*2+1, i, ' ', nil, AliveStylePlay)
-			} else if view.game.CurrentGen[i][j] == ALIVE {
-				view.screen.SetContent(j*2, i, ' ', nil, AliveStylePause)
-				view.screen.SetContent(j*2+1, i, ' ', nil, AliveStylePause)
+	for i := 0; i < view.game.Width; i++ {
+		for j := 0; j < view.game.Height; j++ {
+			if view.game.CellState(i, j) == ALIVE && view.game.Start {
+				view.screen.SetContent(j*2, i, ' ', nil, PlayStyle)
+				view.screen.SetContent(j*2+1, i, ' ', nil, PlayStyle)
+			} else if view.game.CellState(i, j) == ALIVE {
+				view.screen.SetContent(j*2, i, ' ', nil, PauseStyle)
+				view.screen.SetContent(j*2+1, i, ' ', nil, PauseStyle)
 			} else {
 				view.screen.SetContent(j*2, i, ' ', nil, DefaultStyle)
 				view.screen.SetContent(j*2+1, i, ' ', nil, DefaultStyle)
@@ -133,10 +132,12 @@ func (view *View) Run() {
 	framesPerSecond := 15
 	sleepTime := time.Duration(1000/framesPerSecond) * time.Millisecond
 
-	// Read input in another routine, not the exact same as where the game is executed
-	go view.readInput()
+	// Read input in another routine
+	done := make(chan bool, 1)
+	go view.readInput(done)
 
-	for {
+	// Keep running until the user wants to quit the game
+	for !<-done {
 		view.displayGame()
 		if view.game.Start {
 			view.game.Step()
@@ -147,4 +148,8 @@ func (view *View) Run() {
 		// Update screen
 		view.screen.Show()
 	}
+
+	// Close the screen
+	view.screen.Clear()
+	view.screen.Fini()
 }
