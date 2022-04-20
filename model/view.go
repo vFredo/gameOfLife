@@ -3,7 +3,6 @@ package model
 import (
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
@@ -22,6 +21,7 @@ type View struct {
 	screen   tcell.Screen
 	game     GameOfLife
 	hideMenu bool
+	quit     chan struct{}
 }
 
 // Initialize screen and game itself
@@ -35,6 +35,9 @@ func (view *View) InitScreen(game GameOfLife) {
 	if err := view.screen.Init(); err != nil {
 		log.Fatalf("%+v", err)
 	}
+
+	// Initialize the signal to quite
+	view.quit = make(chan struct{})
 
 	view.screen.SetStyle(DefaultStyle)
 	view.screen.EnableMouse()
@@ -61,11 +64,8 @@ func (view *View) readInput() {
 			view.game.Resize(height, width/2)
 		case *tcell.EventKey:
 			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC || ev.Rune() == 'q' {
-				// Close the screen
-				view.screen.Clear()
-				view.screen.Fini()
-				// Exit the program
-				os.Exit(0)
+				view.quit <- struct{}{}
+				return
 			} else if ev.Rune() == ' ' { // space
 				view.game.Start = !view.game.Start
 			} else if ev.Key() == tcell.KeyEnter && !view.game.Start {
@@ -77,6 +77,7 @@ func (view *View) readInput() {
 			switch ev.Buttons() {
 			case tcell.Button1: // left click
 				x, y := ev.Position()
+				// x it's divided by 2 because each cell it's 2 pixels wide
 				row, col := y, x/2
 				// If the game is in pause, let it modified
 				if row < view.game.X && col < view.game.Y && !view.game.Start {
@@ -138,16 +139,24 @@ func (view *View) Run() {
 	// Read input in another routine
 	go view.readInput()
 
-	// Keep running until the user wants to quit the game
 	for {
-		view.displayGame()
-		if view.game.Start {
-			view.game.Step()
-			time.Sleep(sleepTime)
-		} else if !view.hideMenu {
-			view.displayInfo()
+		// Keep running until the user wants to quit the game
+		select {
+		case <-view.quit:
+			// Close the screen
+			view.screen.Clear()
+			view.screen.Fini()
+			return
+		default:
+			view.displayGame()
+			if view.game.Start {
+				view.game.Step()
+				time.Sleep(sleepTime)
+			} else if !view.hideMenu {
+				view.displayInfo()
+			}
+			// Update screen
+			view.screen.Show()
 		}
-		// Update screen
-		view.screen.Show()
 	}
 }
