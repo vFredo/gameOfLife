@@ -1,11 +1,5 @@
 package model
 
-// Consts that tells if a cell is dead or alive
-const (
-	ALIVE = 1
-	DEAD  = 0
-)
-
 // Structure that has everything that it's need it to play the game
 type GameOfLife struct {
 	X               int
@@ -54,8 +48,10 @@ func (game *GameOfLife) Resize(x int, y int) {
 
 // Spawn an alive cell in the [x][y] position
 func (game *GameOfLife) SetCell(x int, y int) {
-	game.CurrentGen[x][y] |= ALIVE
+	// Respawn the cell
+	game.CurrentGen[x][y] |= 0x01
 
+	// Update the neighbor count of the adyacent neighbors, adding the cell
 	for i := -1; i <= 1; i++ {
 		for j := -1; j <= 1; j++ {
 			if (x+i < game.X && x+i >= 0 && y+j < game.Y && y+j >= 0) && (j != 0 || i != 0) {
@@ -67,8 +63,10 @@ func (game *GameOfLife) SetCell(x int, y int) {
 
 // Kill a cell in the [x][y] position
 func (game *GameOfLife) ClearCell(x int, y int) {
-	game.CurrentGen[x][y] &^= ALIVE
+	// Killing the cell
+	game.CurrentGen[x][y] &^= 0x01
 
+	// Update the neighbor count of the adyacent neighbors, deleting the cell itself
 	for i := -1; i <= 1; i++ {
 		for j := -1; j <= 1; j++ {
 			if (x+i < game.X && x+i >= 0 && y+j < game.Y && y+j >= 0) && (j != 0 || i != 0) {
@@ -78,11 +76,12 @@ func (game *GameOfLife) ClearCell(x int, y int) {
 	}
 }
 
-// Returns the cell state, if it's dead (0) or alive (1)
+// Returns the cell state, if it's dead (false) or alive (true)
 func (game *GameOfLife) CellState(x int, y int) bool {
-	return int(game.CurrentGen[x][y]&ALIVE) == ALIVE
+	return game.CurrentGen[x][y]&0x01 == 0x01
 }
 
+// Copy the data of the current generation
 func (game *GameOfLife) copyGeneration() [][]uint8 {
 	previous := make([][]uint8, game.X)
 	for i := 0; i < game.X; i++ {
@@ -104,8 +103,9 @@ func (game *GameOfLife) Step() {
 
 	for i := 0; i < game.X; i++ {
 		for j := 0; j < game.Y; j++ {
+			// Since the neighbor count start at the second less significant bit
 			neighbors := uint(prevGen[i][j] >> 1)
-			if (prevGen[i][j] & ALIVE) == ALIVE {
+			if (prevGen[i][j] & 0x01) == 0x01 { // prevGen Cell it's alive?
 				if neighbors < game.UnderPopulation || neighbors > game.OverPopulation {
 					game.ClearCell(i, j)
 				}
@@ -121,7 +121,7 @@ func (game *GameOfLife) Step() {
 func (game *GameOfLife) ClearGame() {
 	for i := 0; i < game.X; i++ {
 		for j := 0; j < game.Y; j++ {
-			game.CurrentGen[i][j] = DEAD
+			game.CurrentGen[i][j] = 0x00
 		}
 	}
 	game.Generation = 0
