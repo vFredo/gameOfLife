@@ -33,7 +33,9 @@ go run ./main.go -h
 ```
 
 ## TODO
+- [ ] Option to wrap edges of the window (snake-like edges)
 - [ ] Make presets like the glider, glider gun, pulsar etc...
+- [ ] Save custom presets
 
 ## Inspired
 - [go-life](https://github.com/sachaos/go-life)
