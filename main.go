@@ -23,7 +23,7 @@ func main() {
 		UnderPopulation: *under,
 	}
 
-	// Execute the view buffer of the terminal and the game itself
+	// Execute the view buffer on the terminal and initialize game
 	view := model.View{}
 	view.InitScreen(game)
 	view.Run()

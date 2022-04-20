@@ -77,7 +77,7 @@ func (view *View) readInput() {
 			switch ev.Buttons() {
 			case tcell.Button1: // left click
 				x, y := ev.Position()
-				// x it's divided by 2 because each cell it's 2 pixels wide
+				// x it's divided by 2 because each cell it's represent with 2 pixels wide
 				row, col := y, x/2
 				// If the game is in pause, let it modified
 				if row < view.game.X && col < view.game.Y && !view.game.Start {
@@ -114,7 +114,7 @@ func (view *View) displayGame() {
 	}
 }
 
-// Helper method that takes the string (info) and pos (x, y) to put it on the screen
+// Helper method that takes the string (info) and pos (x, y) and put it on the screen
 func (view *View) renderInfo(x int, y int, info string) {
 	for i, byte := range info {
 		view.screen.SetCell(x+i, y, InfoStyle, byte)
@@ -125,7 +125,7 @@ func (view *View) renderInfo(x int, y int, info string) {
 func (view *View) displayInfo() {
 	width, height := view.screen.Size()
 	view.renderInfo(0, 0, " ENTER: next generation, SPC: play/pause, q/ESC/Ctrl-C: quit, h: hide menu ")
-	view.renderInfo(0, 1, " LeftClick: switch state cell, RightClick: clear board ")
+	view.renderInfo(0, 1, " LeftClick: switch state cell, RightClick: reset board ")
 	genString := fmt.Sprintf(" Generation: %d ", view.game.Generation)
 	view.renderInfo(width-len(genString), height-1, genString)
 }
