@@ -33,7 +33,7 @@ go run ./main.go -h
 ```
 
 ## TODO
-- [ ] Option to wrap edges of the window (snake-like edges)
+- [ ] Option to wrap edges of the window (snake-like game edges)
 - [ ] Make presets like the glider, glider gun, pulsar etc...
 - [ ] Save custom presets
 
