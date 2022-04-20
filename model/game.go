@@ -82,7 +82,7 @@ func (game *GameOfLife) Step() {
 
 	for i := 0; i < game.X; i++ {
 		for j := 0; j < game.Y; j++ {
-			// Jump quickly through as many dead cells with no neighbors
+			// Skip quickly through as many dead cells with no neighbors
 			for prevGen[i][j] == 0x00 {
 				j += 1
 				if j >= game.Y {
