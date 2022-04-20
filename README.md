@@ -34,7 +34,6 @@ go run ./main.go -h
 
 ## TODO
 - [ ] Make presets like the glider, glider gun, pulsar etc...
-- [ ] Make menu information responsive
 
 ## Inspired
 - [go-life](https://github.com/sachaos/go-life)

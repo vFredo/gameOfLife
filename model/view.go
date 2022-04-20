@@ -124,10 +124,22 @@ func (view *View) renderInfo(x int, y int, info string) {
 // Information shown on the menu
 func (view *View) displayInfo() {
 	width, height := view.screen.Size()
-	view.renderInfo(0, 0, " ENTER: next generation, SPC: play/pause, q/ESC/Ctrl-C: quit, h: hide menu ")
-	view.renderInfo(0, 1, " LeftClick: switch state cell, RightClick: reset board ")
-	genString := fmt.Sprintf(" Generation: %d ", view.game.Generation)
-	view.renderInfo(width-len(genString), height-1, genString)
+
+	generationText := fmt.Sprintf(" Generation: %d ", view.game.Generation)
+	firstText := " ENTER: next generation, SPC: play/pause, q/ESC/Ctrl-C: quit, h: hide menu "
+	secondText := " LeftClick: switch state cell, RightClick: reset board "
+	x, y := 0, 0
+
+	if len(firstText) <= width {
+		view.renderInfo(x, y, firstText)
+		y += 1
+	}
+
+	if len(secondText) <= width {
+		view.renderInfo(x, y, secondText)
+	}
+
+	view.renderInfo(width-len(generationText), height-1, generationText)
 }
 
 // Infinite loop for the terminal view buffer where the game is executed
