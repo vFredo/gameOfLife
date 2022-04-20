@@ -25,63 +25,24 @@ func (game *GameOfLife) Init(x int, y int) {
 	game.Start = false
 }
 
-// Resize board according to the current width and height of the window (x,y)
-func (game *GameOfLife) Resize(x int, y int) {
-	// Create the new board
-	newBoard := make([][]uint8, x)
-	for i := 0; i < x; i++ {
-		newBoard[i] = make([]uint8, y)
-	}
-
-	// Copy cells from the previous board to the new board
-	for i := 0; i < game.X; i++ {
-		for j := 0; j < game.Y; j++ {
-			if i < x && j < y {
-				newBoard[i][j] = game.CurrentGen[i][j]
-			}
-		}
-	}
-	game.X = x
-	game.Y = y
-	game.CurrentGen = newBoard
-}
-
-// Spawn an alive cell in the [x][y] position
-func (game *GameOfLife) SetCell(x int, y int) {
-	// Respawn the cell
-	game.CurrentGen[x][y] |= 0x01
-
-	// Update the neighbor count of the adyacent neighbors, adding the cell
+// Update the count of each adyacent neighbor taking into account the new state of the cell
+// If state == true add 1, else delete 1 to the count
+func (game *GameOfLife) updateNeighbors(x int, y int, state bool) {
 	for i := -1; i <= 1; i++ {
 		for j := -1; j <= 1; j++ {
+			// don't include the cell itself and cells that are beyond the the matrix indexes
 			if (x+i < game.X && x+i >= 0 && y+j < game.Y && y+j >= 0) && (j != 0 || i != 0) {
-				game.CurrentGen[x+i][y+j] += 0x02
+				if state {
+					game.CurrentGen[x+i][y+j] += 0x02
+				} else {
+					game.CurrentGen[x+i][y+j] -= 0x02
+				}
 			}
 		}
 	}
 }
 
-// Kill a cell in the [x][y] position
-func (game *GameOfLife) ClearCell(x int, y int) {
-	// Killing the cell
-	game.CurrentGen[x][y] &^= 0x01
-
-	// Update the neighbor count of the adyacent neighbors, deleting the cell itself
-	for i := -1; i <= 1; i++ {
-		for j := -1; j <= 1; j++ {
-			if (x+i < game.X && x+i >= 0 && y+j < game.Y && y+j >= 0) && (j != 0 || i != 0) {
-				game.CurrentGen[x+i][y+j] -= 0x02
-			}
-		}
-	}
-}
-
-// Returns the cell state, if it's dead (false) or alive (true)
-func (game *GameOfLife) CellState(x int, y int) bool {
-	return game.CurrentGen[x][y]&0x01 == 0x01
-}
-
-// Copy the data of the current generation
+// Copy the data of the current generation into a new matrix
 func (game *GameOfLife) copyGeneration() [][]uint8 {
 	previous := make([][]uint8, game.X)
 	for i := 0; i < game.X; i++ {
@@ -93,8 +54,26 @@ func (game *GameOfLife) copyGeneration() [][]uint8 {
 			previous[i][j] = game.CurrentGen[i][j]
 		}
 	}
-
 	return previous
+}
+
+// Spawn an alive cell in the [x][y] position
+func (game *GameOfLife) SetCell(x int, y int) {
+	// Respawning the cell
+	game.CurrentGen[x][y] |= 0x01
+	game.updateNeighbors(x, y, true)
+}
+
+// Kill a cell in the [x][y] position
+func (game *GameOfLife) ClearCell(x int, y int) {
+	// Killing the cell
+	game.CurrentGen[x][y] &^= 0x01
+	game.updateNeighbors(x, y, false)
+}
+
+// Returns the cell state, if it's dead (false) or alive (true)
+func (game *GameOfLife) CellState(x int, y int) bool {
+	return game.CurrentGen[x][y]&0x01 == 0x01
 }
 
 // Go to the next generation of the game
@@ -115,6 +94,27 @@ func (game *GameOfLife) Step() {
 		}
 	}
 	game.Generation += 1
+}
+
+// Resize the board according to the new width and height of the window [x][y]
+func (game *GameOfLife) Resize(x int, y int) {
+	// Create the new board
+	newBoard := make([][]uint8, x)
+	for i := 0; i < x; i++ {
+		newBoard[i] = make([]uint8, y)
+	}
+
+	// Copy cells from the previous board to the new board
+	for i := 0; i < game.X; i++ {
+		for j := 0; j < game.Y; j++ {
+			if i < x && j < y {
+				newBoard[i][j] = game.CurrentGen[i][j]
+			}
+		}
+	}
+	game.X = x
+	game.Y = y
+	game.CurrentGen = newBoard
 }
 
 // Kill all the cells that are in the board
