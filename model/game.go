@@ -25,7 +25,7 @@ func (game *GameOfLife) Init(x int, y int) {
 	game.Start = false
 }
 
-// Update the count of each adyacent neighbor taking into account the new state of the cell
+// Update the count of each adjacent neighbor taking into account the new state of the cell
 // If state == true add 1, else delete 1 to the count
 func (game *GameOfLife) updateNeighbors(x int, y int, state bool) {
 	for i := -1; i <= 1; i++ {
@@ -58,14 +58,14 @@ func (game *GameOfLife) copyGeneration() [][]uint8 {
 }
 
 // Spawn an alive cell in the [x][y] position
-func (game *GameOfLife) SetCell(x int, y int) {
-	// Respawning the cell
+func (game *GameOfLife) SpawnCell(x int, y int) {
+	// Spawning the cell
 	game.CurrentGen[x][y] |= 0x01
 	game.updateNeighbors(x, y, true)
 }
 
 // Kill a cell in the [x][y] position
-func (game *GameOfLife) ClearCell(x int, y int) {
+func (game *GameOfLife) KillCell(x int, y int) {
 	// Killing the cell
 	game.CurrentGen[x][y] &^= 0x01
 	game.updateNeighbors(x, y, false)
@@ -76,7 +76,7 @@ func (game *GameOfLife) CellState(x int, y int) bool {
 	return game.CurrentGen[x][y]&0x01 == 0x01
 }
 
-// Go to the next generation of the game
+// Go to the next generation of cells
 func (game *GameOfLife) Step() {
 	prevGen := game.copyGeneration()
 
@@ -86,10 +86,10 @@ func (game *GameOfLife) Step() {
 			neighbors := uint(prevGen[i][j] >> 1)
 			if (prevGen[i][j] & 0x01) == 0x01 { // prevGen Cell it's alive?
 				if neighbors < game.UnderPopulation || neighbors > game.OverPopulation {
-					game.ClearCell(i, j)
+					game.KillCell(i, j)
 				}
 			} else if neighbors == game.BirthCell {
-				game.SetCell(i, j)
+				game.SpawnCell(i, j)
 			}
 		}
 	}
@@ -117,7 +117,7 @@ func (game *GameOfLife) Resize(x int, y int) {
 	game.CurrentGen = newBoard
 }
 
-// Kill all the cells that are in the board
+// Kill all the cells that are in the board and reset neighbor's counters
 func (game *GameOfLife) ClearGame() {
 	for i := 0; i < game.X; i++ {
 		for j := 0; j < game.Y; j++ {

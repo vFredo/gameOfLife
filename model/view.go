@@ -82,9 +82,9 @@ func (view *View) readInput() {
 				// If the game is in pause, let it modified
 				if row < view.game.X && col < view.game.Y && !view.game.Start {
 					if view.game.CellState(row, col) {
-						view.game.ClearCell(row, col)
+						view.game.KillCell(row, col)
 					} else {
-						view.game.SetCell(row, col)
+						view.game.SpawnCell(row, col)
 					}
 				}
 			case tcell.Button2: // right click
@@ -149,10 +149,13 @@ func (view *View) Run() {
 			return
 		default:
 			view.displayGame()
+
 			if view.game.Start {
 				view.game.Step()
 				time.Sleep(sleepTime)
-			} else if !view.hideMenu {
+			}
+
+			if !view.hideMenu {
 				view.displayInfo()
 			}
 			// Update screen
