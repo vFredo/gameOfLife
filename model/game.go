@@ -42,21 +42,6 @@ func (game *GameOfLife) updateNeighbors(x int, y int, state bool) {
 	}
 }
 
-// Copy the data of the current generation into a new matrix
-func (game *GameOfLife) copyGeneration() [][]uint8 {
-	previous := make([][]uint8, game.X)
-	for i := 0; i < game.X; i++ {
-		previous[i] = make([]uint8, game.Y)
-	}
-
-	for i := 0; i < game.X; i++ {
-		for j := 0; j < game.Y; j++ {
-			previous[i][j] = game.CurrentGen[i][j]
-		}
-	}
-	return previous
-}
-
 // Spawn an alive cell in the [x][y] position
 func (game *GameOfLife) SpawnCell(x int, y int) {
 	// Spawning the cell
@@ -78,7 +63,12 @@ func (game *GameOfLife) CellState(x int, y int) bool {
 
 // Go to the next generation of cells
 func (game *GameOfLife) Step() {
-	prevGen := game.copyGeneration()
+	// Copy the data of the current generation into a new matrix
+	prevGen := make([][]uint8, game.X)
+	for i := 0; i < game.X; i++ {
+		prevGen[i] = make([]uint8, game.Y)
+		copy(prevGen[i], game.CurrentGen[i])
+	}
 
 	for i := 0; i < game.X; i++ {
 		for j := 0; j < game.Y; j++ {
