@@ -82,6 +82,14 @@ func (game *GameOfLife) Step() {
 
 	for i := 0; i < game.X; i++ {
 		for j := 0; j < game.Y; j++ {
+			// Jump quickly through as many dead cells with no neighbors
+			for prevGen[i][j] == 0x00 {
+				j += 1
+				if j >= game.Y {
+					goto RowDone
+				}
+			}
+
 			// Since the neighbor count start at the second less significant bit
 			neighbors := uint(prevGen[i][j] >> 1)
 			if (prevGen[i][j] & 0x01) == 0x01 { // prevGen Cell it's alive?
@@ -92,6 +100,7 @@ func (game *GameOfLife) Step() {
 				game.SpawnCell(i, j)
 			}
 		}
+	RowDone:
 	}
 	game.Generation += 1
 }

@@ -9,12 +9,12 @@ More about the game [Game of Life](https://en.wikipedia.org/wiki/Conway's_Game_o
 
    |          Key bind          |         Description                  |
    | -------------------------- | ------------------------------------ |
-   | `Space`                    | Play/Pause the execution             |
+   | `Space`                    | Play/Pause the board                 |
    | `Enter`                    | Move to the next generation on pause |
-   | `LeftClick`                | Toggle cell dead/alive on pause      |
+   | `LeftClick`                | Toggle cell state spawn/kill on pause|
    | `RightClick`               | Clear board                          |
    | `q` or `Esc` or `Ctrl + c` | Exit the game                        |
-   | `h`                        | Hide menu                            |
+   | `h`                        | Hide information menu                |
 
 ## Execution
 Create the executable with:
@@ -33,9 +33,9 @@ go run ./main.go -h
 ```
 
 ## TODO
-- [ ] More efficient way to check if a cell is alive or dead
 - [ ] Make presets like the glider, glider gun, pulsar etc...
 - [ ] Make menu information responsive
 
 ## Inspired
 - [go-life](https://github.com/sachaos/go-life)
+- [Michael Abrash's Graphics Programming Black Book (1997)](http://www.jagregory.com/abrash-black-book/)
