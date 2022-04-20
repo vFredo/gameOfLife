@@ -86,7 +86,7 @@ func (game *GameOfLife) Step() {
 			for prevGen[i][j] == 0x00 {
 				j += 1
 				if j >= game.Y {
-					goto RowDone
+					goto ColumnDone
 				}
 			}
 
@@ -100,7 +100,7 @@ func (game *GameOfLife) Step() {
 				game.SpawnCell(i, j)
 			}
 		}
-	RowDone:
+	ColumnDone:
 	}
 	game.Generation += 1
 }
