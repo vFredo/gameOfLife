@@ -5,6 +5,7 @@ type GameOfLife struct {
 	X               int
 	Y               int
 	Start           bool
+	WrapEdges       bool
 	Generation      uint
 	CurrentGen      [][]uint8
 	BirthCell       uint
@@ -30,12 +31,35 @@ func (game *GameOfLife) Init(x int, y int) {
 func (game *GameOfLife) updateNeighbors(x int, y int, state bool) {
 	for i := -1; i <= 1; i++ {
 		for j := -1; j <= 1; j++ {
-			// don't include the cell itself and cells that are beyond the the matrix indexes
-			if (x+i < game.X && x+i >= 0 && y+j < game.Y && y+j >= 0) && (j != 0 || i != 0) {
+
+			// Temp variables that toggle between wrap edges and unwrap edges
+			aboveBelow, leftRight := i, j
+
+			// Don't include the cell itself
+			if i == 0 && j == 0 {
+				continue
+			}
+
+			if game.WrapEdges {
+				if x == 0 && i == -1 {
+					aboveBelow = game.X - 1
+				} else if x == (game.X-1) && i == 1 {
+					aboveBelow = -(game.X - 1)
+				}
+
+				if y == 0 && j == -1 {
+					leftRight = game.Y - 1
+				} else if y == (game.Y-1) && j == 1 {
+					leftRight = -(game.Y - 1)
+				}
+			}
+
+			// Don't include cells that are beyond the the matrix indexes
+			if x+aboveBelow < game.X && x+aboveBelow >= 0 && y+leftRight < game.Y && y+leftRight >= 0 {
 				if state {
-					game.CurrentGen[x+i][y+j] += 0x02
+					game.CurrentGen[x+aboveBelow][y+leftRight] += 0x02
 				} else {
-					game.CurrentGen[x+i][y+j] -= 0x02
+					game.CurrentGen[x+aboveBelow][y+leftRight] -= 0x02
 				}
 			}
 		}
