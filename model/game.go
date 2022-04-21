@@ -4,7 +4,6 @@ package model
 type GameOfLife struct {
 	X               int
 	Y               int
-	Start           bool
 	WrapEdges       bool
 	Generation      uint
 	CurrentGen      [][]uint8
