@@ -22,7 +22,6 @@ func (game *GameOfLife) Init(x int, y int) {
 	game.Y = y
 	game.CurrentGen = field
 	game.Generation = 0
-	game.Start = false
 }
 
 // Update the count of each adjacent neighbor taking into account the new state of the cell
@@ -30,14 +29,13 @@ func (game *GameOfLife) Init(x int, y int) {
 func (game *GameOfLife) updateNeighbors(x int, y int, state bool) {
 	for i := -1; i <= 1; i++ {
 		for j := -1; j <= 1; j++ {
-
-			// Temp variables that toggle between wrap edges and unwrap edges
-			aboveBelow, leftRight := i, j
-
 			// Don't include the cell itself
 			if i == 0 && j == 0 {
-				continue
+				j += 1
 			}
+
+			// Useful temp variables when WrapEdges is enabled
+			aboveBelow, leftRight := i, j
 
 			if game.WrapEdges {
 				if x == 0 && i == -1 {
@@ -84,7 +82,7 @@ func (game *GameOfLife) CellState(x int, y int) bool {
 	return game.CurrentGen[x][y]&0x01 == 0x01
 }
 
-// Go to the next generation of cells
+// Go to the next generation of the cells
 func (game *GameOfLife) Step() {
 	// Copy the data of the current generation into a new matrix
 	prevGen := make([][]uint8, game.X)
