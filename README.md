@@ -1,6 +1,6 @@
 # Game of Life
 
-This is yet another Conway's Game of Life interpretation made in Golang on the terminal.
+Yet another Conway's Game of Life implementation made in Go on the terminal.
 It's not the best but I just did it to learn a little bit more of the Go programming
 language. Read more about the [Game of Life](https://en.wikipedia.org/wiki/Conway's_Game_of_Life).
 
