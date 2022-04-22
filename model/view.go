@@ -37,7 +37,7 @@ func (view *View) InitScreen(game GameOfLife) {
 		log.Fatalf("%+v", err)
 	}
 
-	// Initialize the signal to quite
+	// Initialize the signal to quit
 	view.quit = make(chan struct{})
 
 	view.screen.SetStyle(DefaultStyle)
@@ -116,7 +116,7 @@ func (view *View) displayGame() {
 	}
 }
 
-// Helper method that takes the string (info) and pos (x, y) and put it on the screen
+// Helper method that takes the string (info) and pos [x][y] and put it on the screen
 func (view *View) renderInfo(x int, y int, info string) {
 	for i, byte := range info {
 		view.screen.SetCell(x+i, y, InfoStyle, byte)
@@ -146,7 +146,7 @@ func (view *View) displayInfo() {
 
 // Infinite loop for the terminal view buffer where the game is executed
 func (view *View) Run() {
-	// Get the FPS for executing the game while is on 'play' taking into account the refresh rate of the screen
+	// Get the FPS for executing the game while is on a 'start' state
 	framesPerSecond := 15
 	sleepTime := time.Duration(1000/framesPerSecond) * time.Millisecond
 
