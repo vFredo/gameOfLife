@@ -16,11 +16,10 @@ type GameOfLife struct {
 
 // Initialize a new game with zero cells alive
 func (game *GameOfLife) Init(x int, y int) {
-	game.Lenght = uint(x * y)
-	field := make([]uint8, game.Lenght)
 	game.X = x
 	game.Y = y
-	game.CurrentGen = field
+	game.Lenght = uint(x * y)
+	game.CurrentGen = make([]uint8, game.Lenght)
 	game.Generation = 0
 }
 
@@ -50,7 +49,7 @@ func (game *GameOfLife) updateNeighbors(x int, y int, state bool) {
 				}
 			}
 
-			// Don't include cells that are beyond the the matrix indexes
+			// Don't include cells that are beyond the array's indexes
 			if x+aboveBelow < game.X && x+aboveBelow >= 0 && y+leftRight < game.Y && y+leftRight >= 0 {
 				pos := ((x + aboveBelow) * game.Y) + (y + leftRight)
 				if state {
@@ -84,7 +83,7 @@ func (game *GameOfLife) CellState(x int, y int) bool {
 
 // Go to the next generation of the cells
 func (game *GameOfLife) Step() {
-	// Copy the data of the current generation into a new matrix
+	// Copy the data of the current generation into a new array
 	prevGen := make([]uint8, game.Lenght)
 	copy(prevGen, game.CurrentGen)
 
