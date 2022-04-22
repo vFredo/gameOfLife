@@ -12,7 +12,7 @@ func main() {
 	birth := flag.Uint("b", 3, "Indicates the exact number of neighbors that a cell needs in order to be spawn in the next generation.")
 	under := flag.Uint("u", 2, "Indicates the number of neighbors a cell needs to be killed due to under population.")
 	over := flag.Uint("o", 3, "Indicates the number of neighbors a cell needs to be killed due to over population.")
-	wrapEdge := flag.Bool("wrap", false, "Use wrap edges on the board.")
+	wrapEdge := flag.Bool("wrap", false, "Use wrap edges on the board (toroidal array).")
 
 	// Parse flag with the OS's executable arguments
 	flag.Parse()
