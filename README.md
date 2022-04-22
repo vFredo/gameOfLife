@@ -1,9 +1,9 @@
 # Game of Life
 
-This is yet another Conway's Game of Life interpretation made in Golang on the terminal.
+This is yet another Conway's Game of Life interpretation made in Golang for the terminal.
 It's not the best but I just did it to learn a little bit more of the Go programming
 language.
-More about the game [Game of Life](https://en.wikipedia.org/wiki/Conway's_Game_of_Life).
+More about the [Game of Life](https://en.wikipedia.org/wiki/Conway's_Game_of_Life).
 
 ## Key binds
 
