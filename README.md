@@ -1,9 +1,8 @@
 # Game of Life
 
-This is yet another Conway's Game of Life interpretation made in Golang for the terminal.
+Yet another Conway's Game of Life implementation made in Go on the terminal.
 It's not the best but I just did it to learn a little bit more of the Go programming
-language.
-More about the [Game of Life](https://en.wikipedia.org/wiki/Conway's_Game_of_Life).
+language. Read more about the [Game of Life](https://en.wikipedia.org/wiki/Conway's_Game_of_Life).
 
 ## Key binds
 
@@ -21,9 +20,8 @@ Create the executable with:
 ```bash
 go build
 ```
-There are flags so you can especify the behavior of the game. You can see all the
-option by doing.
-
+There are some flags as parameter for the executable so you can especify some details on
+the behavior of the game. You can see all the options by doing:
 ```bash
 # On the executable
 ./gameOfLife -h
@@ -33,9 +31,8 @@ go run ./main.go -h
 ```
 
 ## TODO
-- [ ] Option to wrap edges of the window (snake-like game edges)
 - [ ] Make presets like the glider, glider gun, pulsar etc...
-- [ ] Save custom presets
+- [ ] User can save custom presets
 
 ## Inspired
 - [go-life](https://github.com/sachaos/go-life)

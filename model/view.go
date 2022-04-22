@@ -20,6 +20,7 @@ var (
 type View struct {
 	screen   tcell.Screen
 	game     GameOfLife
+	Start    bool
 	hideMenu bool
 	quit     chan struct{}
 }
@@ -45,6 +46,7 @@ func (view *View) InitScreen(game GameOfLife) {
 
 	// Adding the game to the view
 	view.game = game
+	view.Start = false
 
 	// Initialize Game
 	width, height := view.screen.Size()
@@ -67,8 +69,8 @@ func (view *View) readInput() {
 				view.quit <- struct{}{}
 				return
 			} else if ev.Rune() == ' ' { // space
-				view.game.Start = !view.game.Start
-			} else if ev.Key() == tcell.KeyEnter && !view.game.Start {
+				view.Start = !view.Start
+			} else if ev.Key() == tcell.KeyEnter && !view.Start {
 				view.game.Step()
 			} else if ev.Rune() == 'h' {
 				view.hideMenu = !view.hideMenu
@@ -80,7 +82,7 @@ func (view *View) readInput() {
 				// x it's divided by 2 because each cell it's represent with 2 pixels wide
 				row, col := y, x/2
 				// If the game is in pause, let it modified
-				if row < view.game.X && col < view.game.Y && !view.game.Start {
+				if row < view.game.X && col < view.game.Y && !view.Start {
 					if view.game.CellState(row, col) {
 						view.game.KillCell(row, col)
 					} else {
@@ -100,7 +102,7 @@ func (view *View) displayGame() {
 	// Death: Background color, AlivePause: blue, AlivePlay: yellow
 	for i := 0; i < view.game.X; i++ {
 		for j := 0; j < view.game.Y; j++ {
-			if view.game.CellState(i, j) && view.game.Start {
+			if view.game.CellState(i, j) && view.Start {
 				view.screen.SetContent(j*2, i, ' ', nil, PlayStyle)
 				view.screen.SetContent(j*2+1, i, ' ', nil, PlayStyle)
 			} else if view.game.CellState(i, j) {
@@ -162,7 +164,7 @@ func (view *View) Run() {
 		default:
 			view.displayGame()
 
-			if view.game.Start {
+			if view.Start {
 				view.game.Step()
 				time.Sleep(sleepTime)
 			}
