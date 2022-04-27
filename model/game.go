@@ -1,5 +1,7 @@
 package model
 
+import "log"
+
 // Structure that has everything that it's need it to play the game
 type GameOfLife struct {
 	X               int
@@ -12,7 +14,7 @@ type GameOfLife struct {
 	BirthCell       uint
 	OverPopulation  uint
 	UnderPopulation uint
-	Presets         PresetManager
+	PresetManager   PresetManager
 }
 
 // Initialize a new game with zero cells alive
@@ -22,8 +24,8 @@ func (game *GameOfLife) Init(x int, y int) {
 	game.Lenght = uint(x * y)
 	game.CurrentGen = make([]uint8, game.Lenght)
 	game.Generation = 0
-	game.Presets = PresetManager{}
-	game.Presets.FetchPresets()
+	game.PresetManager = PresetManager{}
+	game.PresetManager.FetchPresets()
 }
 
 // Update the count of each adjacent neighbor taking into account the new state of the cell
@@ -152,13 +154,11 @@ func (game *GameOfLife) ClearGame() {
 // Open preset that it's on the list of PresetManager with the name given
 func (game *GameOfLife) OpenPreset(name string) {
 	game.ClearGame()
-	var currPreset Preset
-	for i := 0; i < len(game.Presets.Presets); i++ {
-		if game.Presets.Presets[i].Name == name {
-			currPreset = game.Presets.Presets[i]
-			break
-		}
-	}
+
+  currPreset, err := game.PresetManager.GetPreset(name)
+  if err != nil {
+    log.Fatalf("Error while getting preset: %s", err)
+  }
 
 	for k := 0; k < len(currPreset.AliveCells); k++ {
 		aliveCell := currPreset.AliveCells[k]
@@ -170,5 +170,5 @@ func (game *GameOfLife) OpenPreset(name string) {
 
 // Save the current board as a json file with the name given
 func (game *GameOfLife) SaveBoard(name string) {
-	game.Presets.CreatePreset(name, game.CurrentGen, game.X, game.Y)
+	game.PresetManager.CreatePreset(name, game.CurrentGen, game.X, game.Y)
 }

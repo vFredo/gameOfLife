@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"log"
 	"math"
@@ -74,6 +75,15 @@ func (pm *PresetManager) CreatePreset(name string, board []uint8, x int, y int) 
 
 	newPreset.EncodeToJson()
 	pm.Presets = append(pm.Presets, newPreset)
+}
+
+func (pm *PresetManager) GetPreset(name string) (Preset, error) {
+	for i := 0; i < len(pm.Presets); i++ {
+		if pm.Presets[i].Name == name {
+			return pm.Presets[i], nil
+		}
+	}
+  return Preset{}, errors.New("Couldn't find preset with the name: " + name)
 }
 
 // Encode struct Preset into a json string
