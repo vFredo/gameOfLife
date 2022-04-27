@@ -148,17 +148,27 @@ func (game *GameOfLife) ClearGame() {
 	game.Generation = 0
 }
 
-// TODO: Center preset on currentGen size and cicle through it
-// If the preset don't fit, then show a message
-func (game *GameOfLife) CiclePreset() {
+// TODO: Center preset on currentGen
+// Open preset that it's on the list of PresetManager with the name given
+func (game *GameOfLife) OpenPreset(name string) {
 	game.ClearGame()
-	currPreset := game.Presets.Presets[0]
+	var currPreset Preset
+	for i := 0; i < len(game.Presets.Presets); i++ {
+		if game.Presets.Presets[i].Name == name {
+			currPreset = game.Presets.Presets[i]
+			break
+		}
+	}
+
 	for k := 0; k < len(currPreset.AliveCells); k++ {
 		aliveCell := currPreset.AliveCells[k]
-		game.SpawnCell(int(aliveCell[0]), int(aliveCell[1]))
+		if int(aliveCell[0]) < game.X && int(aliveCell[1]) < game.Y {
+			game.SpawnCell(int(aliveCell[0]), int(aliveCell[1]))
+		}
 	}
 }
 
+// Save the current board as a json file with the name given
 func (game *GameOfLife) SaveBoard(name string) {
 	game.Presets.CreatePreset(name, game.CurrentGen, game.X, game.Y)
 }

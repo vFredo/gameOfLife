@@ -21,7 +21,7 @@ type PresetManager struct {
 	Presets []Preset
 }
 
-// Load every preset that is on the './presets/' folder
+// Load every preset that is on the PRESET_FILE folder
 func (pm *PresetManager) FetchPresets() {
 	files, err := ioutil.ReadDir(PRESET_FILE)
 	if err != nil {
@@ -43,6 +43,7 @@ func (pm *PresetManager) FetchPresets() {
 }
 
 // TODO: Need to test this
+// Create and save the preset in PRESET_FILE
 func (pm *PresetManager) CreatePreset(name string, board []uint8, x int, y int) {
 	max_width, max_height := math.Inf(-1), math.Inf(-1)
 	min_width, min_height := math.Inf(1), math.Inf(1)
