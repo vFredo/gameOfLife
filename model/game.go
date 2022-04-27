@@ -12,6 +12,7 @@ type GameOfLife struct {
 	BirthCell       uint
 	OverPopulation  uint
 	UnderPopulation uint
+	Presets          PresetManager
 }
 
 // Initialize a new game with zero cells alive
@@ -21,6 +22,8 @@ func (game *GameOfLife) Init(x int, y int) {
 	game.Lenght = uint(x * y)
 	game.CurrentGen = make([]uint8, game.Lenght)
 	game.Generation = 0
+  game.Presets = PresetManager{}
+  game.Presets.FetchPresets()
 }
 
 // Update the count of each adjacent neighbor taking into account the new state of the cell
@@ -143,4 +146,15 @@ func (game *GameOfLife) ClearGame() {
 		game.CurrentGen[i] = 0x00
 	}
 	game.Generation = 0
+}
+
+// TODO: Center preset on currentGen size and cicle through it
+// If the prest don't fit, then show a message
+func (game *GameOfLife) CiclePreset() {
+  game.ClearGame()
+  currPreset := game.Presets.Presets[0]
+  for k := 0; k < len(currPreset.AliveCells); k++ {
+    aliveCell := currPreset.AliveCells[k]
+    game.SpawnCell(int(aliveCell[0]), int(aliveCell[1]))
+  }
 }
