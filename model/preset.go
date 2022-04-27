@@ -78,19 +78,18 @@ func (pm *PresetManager) CreatePreset(name string, board []uint8, x int, y int) 
 // Encode struct Preset into a json string
 func (p *Preset) EncodeToJson() {
 	// MarshalIndent to format the output
-	encodedPreset, err := json.Marshal(p)
+	encodedPreset, err := json.MarshalIndent(p, "", "  ")
 	if err != nil {
 		log.Fatalf("Error occurred encoding struct Preset: %s", err.Error())
 	}
 
-	file, err := os.OpenFile(PRESET_FILE+p.Name+".json", os.O_RDWR, 0644)
+	file, err := os.OpenFile(PRESET_FILE+p.Name+".json", os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		log.Fatalf("Error occurred while open/created file %s: %s", p.Name, err)
 	}
 	defer file.Close()
 
 	file.Write(encodedPreset)
-	file.Close()
 }
 
 // Decode a json string into struct Preset

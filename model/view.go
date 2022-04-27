@@ -74,6 +74,8 @@ func (view *View) readInput() {
 				view.game.Step()
 			} else if ev.Rune() == 'h' {
 				view.hideMenu = !view.hideMenu
+			} else if ev.Rune() == 'c' {
+				view.game.SaveBoard("NewPreset")
 			}
 		case *tcell.EventMouse:
 			switch ev.Buttons() {
@@ -129,7 +131,7 @@ func (view *View) displayInfo() {
 
 	generationText := fmt.Sprintf(" Generation: %d ", view.game.Generation)
 	firstText := " ENTER: next generation, SPC: play/pause, q/ESC/Ctrl-C: quit, h: hide menu "
-	secondText := " LeftClick: switch state cell, RightClick: reset board "
+	secondText := " LeftClick: switch state cell, RightClick: reset board  c: create preset "
 	x, y := 0, 0
 
 	if len(firstText) <= width {
@@ -139,6 +141,7 @@ func (view *View) displayInfo() {
 
 	if len(secondText) <= width {
 		view.renderInfo(x, y, secondText)
+		y += 1
 	}
 
 	view.renderInfo(width-len(generationText), height-1, generationText)
