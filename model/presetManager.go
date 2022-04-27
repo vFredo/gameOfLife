@@ -53,7 +53,7 @@ func (pm *PresetManager) CreatePreset(name string, board []uint8, x int, y int) 
 		}
 	}
 
-	// TODO: This doesn't work at its suposed to, but nevertheless.. it works xD
+	// TODO: This doesn't work at how it's suposed to, but nevertheless.. it works xD
 	newPreset.Width = uint(max_width - min_width)
 	newPreset.Height = uint(max_height - min_height)
 
