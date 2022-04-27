@@ -75,7 +75,9 @@ func (view *View) readInput() {
 			} else if ev.Rune() == 'h' {
 				view.hideMenu = !view.hideMenu
 			} else if ev.Rune() == 'c' {
-				view.game.SaveBoard("NewPreset")
+        if !view.game.Start {
+          view.game.SaveBoard(time.Now().Format("01-06-2006_15:04:05"))
+        }
 			}
 		case *tcell.EventMouse:
 			switch ev.Buttons() {
