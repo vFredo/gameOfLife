@@ -155,10 +155,10 @@ func (game *GameOfLife) ClearGame() {
 func (game *GameOfLife) OpenPreset(name string) {
 	game.ClearGame()
 
-  currPreset, err := game.PresetManager.GetPreset(name)
-  if err != nil {
-    log.Fatalf("Error while getting preset: %s", err)
-  }
+	currPreset, err := game.PresetManager.GetPreset(name)
+	if err != nil {
+		log.Fatalf("Error while getting preset: %s", err)
+	}
 
 	for k := 0; k < len(currPreset.AliveCells); k++ {
 		aliveCell := currPreset.AliveCells[k]

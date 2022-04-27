@@ -19,7 +19,7 @@ func (p *Preset) EncodeToJson() []byte {
 	if err != nil {
 		log.Fatalf("Error occurred encoding struct Preset: %s", err.Error())
 	}
-  return encodedPreset
+	return encodedPreset
 }
 
 // Decode a json string into struct Preset

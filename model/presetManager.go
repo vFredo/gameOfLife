@@ -3,9 +3,9 @@ package model
 import (
 	"errors"
 	"io/ioutil"
-  "os"
 	"log"
 	"math"
+	"os"
 )
 
 const PRESET_FOLDER = "./presets/"
@@ -14,7 +14,7 @@ type PresetManager struct {
 	Presets []Preset
 }
 
-// Load every preset that is on the PRESET_FOLDER
+// Load all presets on the PRESET_FOLDER
 func (pm *PresetManager) FetchPresets() {
 	files, err := ioutil.ReadDir(PRESET_FOLDER)
 	if err != nil {
@@ -32,7 +32,6 @@ func (pm *PresetManager) FetchPresets() {
 	}
 }
 
-// TODO: Need to test this
 // Create and save the preset in PRESET_FOLDER
 func (pm *PresetManager) CreatePreset(name string, board []uint8, x int, y int) {
 	max_width, max_height := math.Inf(-1), math.Inf(-1)
@@ -54,6 +53,7 @@ func (pm *PresetManager) CreatePreset(name string, board []uint8, x int, y int) 
 		}
 	}
 
+	// TODO: This doesn't work at its suposed to, but nevertheless.. it works xD
 	newPreset.Width = uint(max_width - min_width)
 	newPreset.Height = uint(max_height - min_height)
 
@@ -62,10 +62,10 @@ func (pm *PresetManager) CreatePreset(name string, board []uint8, x int, y int) 
 		newPreset.AliveCells[i][1] -= newPreset.Height
 	}
 
-  encodedPreset := newPreset.EncodeToJson()
+	encodedPreset := newPreset.EncodeToJson()
 	pm.Presets = append(pm.Presets, newPreset)
 
-  // Saving preset on PRESET_FOLDER
+	// Saving preset on PRESET_FOLDER
 	file, err := os.OpenFile(PRESET_FOLDER+name+".json", os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		log.Fatalf("Error occurred while open/created file %s: %s", name, err)
@@ -74,6 +74,7 @@ func (pm *PresetManager) CreatePreset(name string, board []uint8, x int, y int) 
 	file.Write(encodedPreset)
 }
 
+// Get the preset that has the given name
 func (pm *PresetManager) GetPreset(name string) (Preset, error) {
 	for i := 0; i < len(pm.Presets); i++ {
 		if pm.Presets[i].Name == name {
