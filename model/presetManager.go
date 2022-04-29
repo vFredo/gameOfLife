@@ -4,7 +4,6 @@ import (
 	"errors"
 	"io/ioutil"
 	"log"
-	"math"
 	"os"
 )
 
@@ -33,36 +32,13 @@ func (pm *PresetManager) FetchPresets() {
 }
 
 // Create and save the preset in PRESET_FOLDER directory
-func (pm *PresetManager) CreatePreset(name string, board []uint8, x int, y int) {
-	max_width, max_height := math.Inf(-1), math.Inf(-1)
-	min_width, min_height := math.Inf(1), math.Inf(1)
+func (pm *PresetManager) CreatePreset(name string, alive [][]uint, x uint, y uint) {
 	var newPreset Preset
+
 	newPreset.Name = name
-
-  // FIX: Maybe this logic needs to be on game.go
-  // So we have to fix the method's parameters
-	for i := x - 1; i > 0; i-- {
-		for j := y - 1; j > 0; j-- {
-			pos := (i * y) + j
-			if (board[pos] & 0x01) == 0x01 {
-				max_width = math.Max(max_width, float64(i))
-				min_width = math.Min(min_width, float64(i))
-
-				max_height = math.Max(max_height, float64(j))
-				min_height = math.Min(min_height, float64(j))
-				newPreset.AliveCells = append(newPreset.AliveCells, []uint{uint(i), uint(j)})
-			}
-		}
-	}
-
-	// TODO: This doesn't work at how it's suposed to, but nevertheless.. it works xD
-	newPreset.Width = uint(max_width - min_width)
-	newPreset.Height = uint(max_height - min_height)
-
-	for i := 0; i < len(newPreset.AliveCells); i++ {
-		newPreset.AliveCells[i][0] -= newPreset.Width
-		newPreset.AliveCells[i][1] -= newPreset.Height
-	}
+	newPreset.Width = x
+	newPreset.Height = y
+	newPreset.AliveCells = alive
 
 	encodedPreset := newPreset.EncodeToJson()
 	pm.Presets = append(pm.Presets, newPreset)

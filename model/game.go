@@ -1,6 +1,9 @@
 package model
 
-import "log"
+import (
+	"log"
+	"math"
+)
 
 // Structure that has everything that it's need it to play the game
 type GameOfLife struct {
@@ -170,5 +173,32 @@ func (game *GameOfLife) OpenPreset(name string) {
 
 // Save the current board as a json file with the name given
 func (game *GameOfLife) SaveBoard(name string) {
-	game.PresetManager.CreatePreset(name, game.CurrentGen, game.X, game.Y)
+	max_width, max_height := math.Inf(-1), math.Inf(-1)
+	min_width, min_height := math.Inf(1), math.Inf(1)
+	var alive [][]uint
+
+	for i := game.X - 1; i > 0; i-- {
+		for j := game.Y - 1; j > 0; j-- {
+			pos := (i * game.Y) + j
+			if (game.CurrentGen[pos] & 0x01) == 0x01 {
+				max_width = math.Max(max_width, float64(i))
+				min_width = math.Min(min_width, float64(i))
+
+				max_height = math.Max(max_height, float64(j))
+				min_height = math.Min(min_height, float64(j))
+				alive = append(alive, []uint{uint(i), uint(j)})
+			}
+		}
+	}
+
+	// FIX: This doesn't work at how it's suposed to, but nevertheless.. it works in most cases xD
+	width := uint(max_width - min_width)
+	height := uint(max_height - min_height)
+
+	for i := 0; i < len(alive); i++ {
+		alive[i][0] -= width
+		alive[i][1] -= height
+	}
+
+	game.PresetManager.CreatePreset(name, alive, width, height)
 }
