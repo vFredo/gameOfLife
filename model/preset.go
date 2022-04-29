@@ -22,7 +22,7 @@ func (p *Preset) EncodeToJson() []byte {
 	return encodedPreset
 }
 
-// Decode a json string into struct Preset
+// Decode a json string to get the values insed the preset itself
 func (p *Preset) DecodeFromJson(buffer []byte) {
 	err := json.Unmarshal(buffer, &p)
 	if err != nil {

@@ -14,7 +14,7 @@ type PresetManager struct {
 	Presets []Preset
 }
 
-// Load all presets on the PRESET_FOLDER
+// Load all presets on the PRESET_FOLDER directory
 func (pm *PresetManager) FetchPresets() {
 	files, err := ioutil.ReadDir(PRESET_FOLDER)
 	if err != nil {
@@ -32,13 +32,15 @@ func (pm *PresetManager) FetchPresets() {
 	}
 }
 
-// Create and save the preset in PRESET_FOLDER
+// Create and save the preset in PRESET_FOLDER directory
 func (pm *PresetManager) CreatePreset(name string, board []uint8, x int, y int) {
 	max_width, max_height := math.Inf(-1), math.Inf(-1)
 	min_width, min_height := math.Inf(1), math.Inf(1)
 	var newPreset Preset
 	newPreset.Name = name
 
+  // FIX: Maybe this logic needs to be on game.go
+  // So we have to fix the method's parameters
 	for i := x - 1; i > 0; i-- {
 		for j := y - 1; j > 0; j-- {
 			pos := (i * y) + j
@@ -74,7 +76,7 @@ func (pm *PresetManager) CreatePreset(name string, board []uint8, x int, y int) 
 	file.Write(encodedPreset)
 }
 
-// Get the preset that has the given name
+// Get the preset that has the given name, if it doesn't exist, throw and error
 func (pm *PresetManager) GetPreset(name string) (Preset, error) {
 	for i := 0; i < len(pm.Presets); i++ {
 		if pm.Presets[i].Name == name {
