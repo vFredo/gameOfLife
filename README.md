@@ -6,21 +6,22 @@ language. Read more about the [Game of Life](https://en.wikipedia.org/wiki/Conwa
 
 ## Key binds
 
-   |          Key bind          |         Description                  |
-   | -------------------------- | ------------------------------------ |
-   | `Space`                    | Play/Pause the board                 |
-   | `Enter`                    | Move to the next generation on pause |
-   | `LeftClick`                | Toggle cell state spawn/kill on pause|
-   | `RightClick`               | Clear board                          |
-   | `q` or `Esc` or `Ctrl + c` | Exit the game                        |
-   | `h`                        | Hide information menu                |
+   |          Key bind          |         Description                           |
+   | -------------------------- | ----------------------------------------------|
+   | `Space`                    | Play/Pause the board                          |
+   | `Enter`                    | Move to the next generation on pause          |
+   | `LeftClick`                | Toggle cell state spawn/kill on pause         |
+   | `RightClick`               | Clear board                                   |
+   | `q` or `Esc` or `Ctrl + c` | Exit the game                                 |
+   | `h`                        | Hide information menu                         |
+   | `c`                        | Create a preset on pause of the current board |
 
 ## Execution
 Create the executable with:
 ```bash
 go build
 ```
-There are some flags as parameter for the executable so you can especify some details on
+There are some flags as parameter for the executable so you can specify some details on
 the behavior of the game. You can see all the options by doing:
 ```bash
 # On the executable
@@ -31,8 +32,10 @@ go run ./main.go -h
 ```
 
 ## TODO
-- [ ] Make presets like the glider, glider gun, pulsar etc...
-- [ ] User can save custom presets
+- [ ] Cycle through the available presets
+- [ ] The user have to give a new name to the preset created
+- [ ] Center the presets according to the size of the screen
+- [ ] Make presets like the glider, glider gun, pulsar, etc...
 
 ## Inspired
 - [go-life](https://github.com/sachaos/go-life)
