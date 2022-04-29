@@ -153,7 +153,6 @@ func (game *GameOfLife) ClearGame() {
 	game.Generation = 0
 }
 
-// TODO: Center preset on currentGen
 // Open preset that it's on the list of PresetManager with the name given
 func (game *GameOfLife) OpenPreset(name string) {
 	game.ClearGame()
@@ -163,6 +162,7 @@ func (game *GameOfLife) OpenPreset(name string) {
 		log.Fatalf("Error while getting preset: %s", err)
 	}
 
+	// TODO: Center preset on currentGen
 	for k := 0; k < len(currPreset.AliveCells); k++ {
 		aliveCell := currPreset.AliveCells[k]
 		if int(aliveCell[0]) < game.X && int(aliveCell[1]) < game.Y {
@@ -177,6 +177,8 @@ func (game *GameOfLife) SaveBoard(name string) {
 	min_width, min_height := math.Inf(1), math.Inf(1)
 	var alive [][]uint
 
+	// Save the position of the alive cells and found the max and min
+	// of the width and height
 	for i := game.X - 1; i > 0; i-- {
 		for j := game.Y - 1; j > 0; j-- {
 			pos := (i * game.Y) + j
@@ -192,9 +194,12 @@ func (game *GameOfLife) SaveBoard(name string) {
 	}
 
 	// FIX: This doesn't work at how it's suposed to, but nevertheless.. it works in most cases xD
+	// To make a smaller preset we have to know the dimentions of the section
+	// that have alive cells on the board; that's why we need the min and max
 	width := uint(max_width - min_width)
 	height := uint(max_height - min_height)
 
+	// Translate the position of the alive cells to the new smaller board of 'width' 'height'
 	for i := 0; i < len(alive); i++ {
 		alive[i][0] -= width
 		alive[i][1] -= height
