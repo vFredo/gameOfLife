@@ -23,6 +23,7 @@ func main() {
 		OverPopulation:  *over,
 		UnderPopulation: *under,
 		WrapEdges:       *wrapEdge,
+		Start:           false,
 	}
 
 	// Execute the view buffer on the terminal and initialize game

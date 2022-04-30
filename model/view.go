@@ -44,11 +44,8 @@ func (view *View) InitScreen(game GameOfLife) {
 	view.screen.EnableMouse()
 	view.screen.Clear()
 
-	// Adding the game to the view
+	// Initialize Game into the view
 	view.game = game
-	view.Start = false
-
-	// Initialize Game
 	width, height := view.screen.Size()
 	view.game.Init(height, width/2)
 }
