@@ -215,3 +215,9 @@ func (game *GameOfLife) SaveBoard(name string) {
 
 	game.PresetManager.CreatePreset(name, alive, width, height)
 }
+
+// Cycle through presets that are load on the PresetManager
+func (game *GameOfLife) CyclePresets() {
+  currPreset := game.PresetManager.CyclePresets()
+  game.OpenPreset(currPreset.Name)
+}

@@ -10,7 +10,8 @@ import (
 const PRESET_FOLDER = "./presets/"
 
 type PresetManager struct {
-	Presets []Preset
+	currPresetIndex int
+	Presets         []Preset
 }
 
 // Load all presets on the PRESET_FOLDER directory
@@ -56,8 +57,20 @@ func (pm *PresetManager) CreatePreset(name string, alive [][]uint, x uint, y uin
 func (pm *PresetManager) GetPreset(name string) (Preset, error) {
 	for i := 0; i < len(pm.Presets); i++ {
 		if pm.Presets[i].Name == name {
+      pm.currPresetIndex = i
 			return pm.Presets[i], nil
 		}
 	}
 	return Preset{}, errors.New("Couldn't find preset with the name: " + name)
+}
+
+// Cycle between all available presets in the array Presets
+func (pm *PresetManager) CyclePresets() Preset {
+  if pm.currPresetIndex+1 < len(pm.Presets) {
+    pm.currPresetIndex += 1
+    return pm.Presets[pm.currPresetIndex]
+  } else {
+    pm.currPresetIndex = 0
+    return pm.Presets[pm.currPresetIndex]
+  }
 }
