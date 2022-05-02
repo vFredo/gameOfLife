@@ -167,8 +167,7 @@ func (game *GameOfLife) OpenPreset(name string) {
 	for k := 0; k < len(currPreset.AliveCells); k++ {
 		aliveCell := currPreset.AliveCells[k]
 		if int(aliveCell[0]) < game.X && int(aliveCell[1]) < game.Y {
-			// FIX: Maybe taking also the center point of the preset and
-			//      compared to x and y could work?
+			// FIX: Make the center point of the preset matrix, into the center point of the view
 			// If the preset width and heigth are half of the currentGen width and Height,
 			// then center the preset (a scuff way of doing it)
 			if currPreset.Width < uint(x) && currPreset.Height < uint(y) {
