@@ -1,6 +1,0 @@
-{
-  "name": "Glider",
-  "width": 3,
-  "height": 3,
-  "cells": [ [ 0,1 ], [ 1,1 ], [ 2,1 ] ]
-}

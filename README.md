@@ -15,7 +15,7 @@ language. Read more about the [Game of Life](https://en.wikipedia.org/wiki/Conwa
    | `q` or `Esc` or `Ctrl + c` | Exit the game                                 |
    | `h`                        | Hide information menu                         |
    | `p`                        | Create a preset on pause of the current board |
-   | `c`                        | Cycle through the preset available            |
+   | `c`                        | Cycle through the presets available           |
 
 ## Execution
 Create the executable with:
@@ -33,8 +33,8 @@ go run ./main.go -h
 ```
 
 ## TODO
-- [ ] The user have to give a new name to the preset created
-- [ ] Make presets like the glider, glider gun, pulsar, etc...
+- [ ] Get option to the user to put the preset's file name
+- [ ] Show which preset we are at in the moment
 
 ## Inspired
 - [go-life](https://github.com/sachaos/go-life)
