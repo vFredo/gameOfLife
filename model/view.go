@@ -47,7 +47,7 @@ func (view *View) InitScreen(game GameOfLife) {
 	// Initialize Game into the view
 	view.game = game
 	width, height := view.screen.Size()
-	view.game.Init(height, width/2)
+	view.game.Init(uint(height), uint(width/2))
 }
 
 // Control input (mouse/keyboard) events on the screen
@@ -60,7 +60,7 @@ func (view *View) readInput() {
 		case *tcell.EventResize:
 			view.screen.Sync()
 			width, height := view.screen.Size()
-			view.game.Resize(height, width/2)
+			view.game.Resize(uint(height), uint(width/2))
 		case *tcell.EventKey:
 			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC || ev.Rune() == 'q' {
 				view.quit <- struct{}{}
@@ -81,7 +81,7 @@ func (view *View) readInput() {
 			case tcell.Button1: // left click
 				x, y := ev.Position()
 				// x it's divided by 2 because each cell it's represent with 2 pixels wide
-				row, col := y, x/2
+				row, col := uint(y), uint(x/2)
 				// If the game is in pause, let it modified
 				if row < view.game.X && col < view.game.Y && !view.Start {
 					if view.game.CellState(row, col) {
@@ -101,12 +101,12 @@ func (view *View) readInput() {
 func (view *View) displayGame() {
 	view.screen.Clear()
 	// Death: Background color, AlivePause: blue, AlivePlay: yellow
-	for i := 0; i < view.game.X; i++ {
-		for j := 0; j < view.game.Y; j++ {
-			if view.game.CellState(i, j) && view.Start {
+	for i := 0; uint(i) < view.game.X; i++ {
+		for j := 0; uint(j) < view.game.Y; j++ {
+			if view.game.CellState(uint(i), uint(j)) && view.Start {
 				view.screen.SetContent(j*2, i, ' ', nil, PlayStyle)
 				view.screen.SetContent(j*2+1, i, ' ', nil, PlayStyle)
-			} else if view.game.CellState(i, j) {
+			} else if view.game.CellState(uint(i), uint(j)) {
 				view.screen.SetContent(j*2, i, ' ', nil, PauseStyle)
 				view.screen.SetContent(j*2+1, i, ' ', nil, PauseStyle)
 			} else {

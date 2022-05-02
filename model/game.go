@@ -7,8 +7,8 @@ import (
 
 // Structure that has everything that it's need it to play the game
 type GameOfLife struct {
-	X               int
-	Y               int
+	X               uint
+	Y               uint
 	Lenght          uint
 	Start           bool
 	WrapEdges       bool
@@ -21,10 +21,10 @@ type GameOfLife struct {
 }
 
 // Initialize a new game with zero cells alive
-func (game *GameOfLife) Init(x int, y int) {
+func (game *GameOfLife) Init(x uint, y uint) {
 	game.X = x
 	game.Y = y
-	game.Lenght = uint(x * y)
+	game.Lenght = x * y
 	game.CurrentGen = make([]uint8, game.Lenght)
 	game.Generation = 0
 	game.PresetManager = PresetManager{}
@@ -32,7 +32,7 @@ func (game *GameOfLife) Init(x int, y int) {
 }
 
 // Update the count of each adjacent neighbor taking into account the new state of the cell
-func (game *GameOfLife) updateNeighbors(x int, y int, state bool) {
+func (game *GameOfLife) updateNeighbors(x uint, y uint, state bool) {
 	for i := -1; i <= 1; i++ {
 		for j := -1; j <= 1; j++ {
 			// Don't include the cell itself
@@ -41,7 +41,7 @@ func (game *GameOfLife) updateNeighbors(x int, y int, state bool) {
 			}
 
 			// Useful temp variables when WrapEdges is enabled
-			aboveBelow, leftRight := i, j
+			aboveBelow, leftRight := uint(i), uint(j)
 
 			if game.WrapEdges {
 				if x == 0 && i == -1 {
@@ -58,7 +58,7 @@ func (game *GameOfLife) updateNeighbors(x int, y int, state bool) {
 			}
 
 			// Don't include cells that are beyond the array's indexes
-			if x+aboveBelow < game.X && x+aboveBelow >= 0 && y+leftRight < game.Y && y+leftRight >= 0 {
+			if x+aboveBelow < game.X && y+leftRight < game.Y {
 				pos := ((x + aboveBelow) * game.Y) + (y + leftRight)
 				if state {
 					game.CurrentGen[pos] += 0x02
@@ -71,21 +71,21 @@ func (game *GameOfLife) updateNeighbors(x int, y int, state bool) {
 }
 
 // Spawn an alive cell in the [x][y] position
-func (game *GameOfLife) SpawnCell(x int, y int) {
+func (game *GameOfLife) SpawnCell(x uint, y uint) {
 	// Spawning the cell
 	game.CurrentGen[x*game.Y+y] |= 0x01
 	game.updateNeighbors(x, y, true)
 }
 
 // Kill a cell in the [x][y] position
-func (game *GameOfLife) KillCell(x int, y int) {
+func (game *GameOfLife) KillCell(x uint, y uint) {
 	// Killing the cell
 	game.CurrentGen[x*game.Y+y] &^= 0x01
 	game.updateNeighbors(x, y, false)
 }
 
 // Returns the cell state, if it's dead (false) or alive (true)
-func (game *GameOfLife) CellState(x int, y int) bool {
+func (game *GameOfLife) CellState(x uint, y uint) bool {
 	return game.CurrentGen[x*game.Y+y]&0x01 == 0x01
 }
 
@@ -95,8 +95,8 @@ func (game *GameOfLife) Step() {
 	prevGen := make([]uint8, game.Lenght)
 	copy(prevGen, game.CurrentGen)
 
-	for i := 0; i < game.X; i++ {
-		for j := 0; j < game.Y; j++ {
+	for i := uint(0); i < game.X; i++ {
+		for j := uint(0); j < game.Y; j++ {
 			pos := i*game.Y + j
 			// Skip quickly through as many dead cells with no neighbors
 			for prevGen[pos] == 0x00 {
@@ -123,13 +123,13 @@ func (game *GameOfLife) Step() {
 }
 
 // Resize the board according to the new width and height of the window [x][y]
-func (game *GameOfLife) Resize(x int, y int) {
+func (game *GameOfLife) Resize(x uint, y uint) {
 	// Create the new board
 	newBoard := make([]uint8, x*y)
 
 	// Copy cells from the previous board to the new board
-	for i := 0; i < game.X; i++ {
-		for j := 0; j < game.Y; j++ {
+	for i := uint(0); i < game.X; i++ {
+		for j := uint(0); j < game.Y; j++ {
 			// Don't copy the cells that are beyond the size of the new board
 			// it's the case where the new board it's smaller than the old one
 			if i < x && j < y {
@@ -139,7 +139,7 @@ func (game *GameOfLife) Resize(x int, y int) {
 			}
 		}
 	}
-	game.Lenght = uint(x * y)
+	game.Lenght = x * y
 	game.X = x
 	game.Y = y
 	game.CurrentGen = newBoard
@@ -171,12 +171,12 @@ func (game *GameOfLife) OpenPreset(name string) {
 
 	for k := 0; k < len(currPreset.AliveCells); k++ {
 		aliveCell := currPreset.AliveCells[k]
-		if aliveCell[0] < uint(game.X) && aliveCell[1] < uint(game.Y) {
+		if aliveCell[0] < game.X && aliveCell[1] < game.Y {
 			// Spawn the cells taking into account the offsets of the center of the preset board
 			// and translating the coordinates to the currentGen board
-			offsetX := int(aliveCell[0] - centerW)
-			offsetY := int(aliveCell[1] - centerH)
-			game.SpawnCell(centerX+offsetX, centerY+offsetY)
+			offsetX := centerW - aliveCell[0]
+			offsetY := centerH - aliveCell[1]
+			game.SpawnCell(centerX-offsetX, centerY-offsetY)
 		}
 	}
 }
@@ -189,15 +189,15 @@ func (game *GameOfLife) SaveBoard(name string) {
 
 	// Save the position of the alive cells and found the max and min
 	// of the width and height
-	for i := game.X - 1; i >= 0; i-- {
-		for j := game.Y - 1; j >= 0; j-- {
+	for i := game.X - 1; i > 0; i-- {
+		for j := game.Y - 1; j > 0; j-- {
 			if game.CellState(i, j) {
 				max_width = math.Max(max_width, float64(i))
 				min_width = math.Min(min_width, float64(i))
 
 				max_height = math.Max(max_height, float64(j))
 				min_height = math.Min(min_height, float64(j))
-				alive = append(alive, []uint{uint(i), uint(j)})
+				alive = append(alive, []uint{i, j})
 			}
 		}
 	}
