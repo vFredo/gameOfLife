@@ -161,22 +161,22 @@ func (game *GameOfLife) OpenPreset(name string) {
 	if err != nil {
 		log.Fatalf("Error while getting preset: %s", err)
 	}
-	x := game.X / 2
-	y := game.Y / 2
+	// CurrentGen center
+	centerX := game.X / 2
+	centerY := game.Y / 2
+
+	// Preset center
+	centerW := currPreset.Width / 2
+	centerH := currPreset.Height / 2
 
 	for k := 0; k < len(currPreset.AliveCells); k++ {
 		aliveCell := currPreset.AliveCells[k]
-		if int(aliveCell[0]) < game.X && int(aliveCell[1]) < game.Y {
-			// FIX: Make the center point of the preset matrix, into the center point of the view
-			// If the preset width and heigth are half of the currentGen width and Height,
-			// then center the preset (a scuff way of doing it)
-			if currPreset.Width < uint(x) && currPreset.Height < uint(y) {
-				deltaX := int(currPreset.Width - aliveCell[0])
-				deltaY := int(currPreset.Height - aliveCell[1])
-				game.SpawnCell(x-deltaX, y-deltaY)
-			} else {
-				game.SpawnCell(int(aliveCell[0]), int(aliveCell[1]))
-			}
+		if aliveCell[0] < uint(game.X) && aliveCell[1] < uint(game.Y) {
+			// Spawn the cells taking into account the offsets of the center of the preset board
+			// and translating the coordinates to the currentGen board
+			offsetX := int(aliveCell[0] - centerW)
+			offsetY := int(aliveCell[1] - centerH)
+			game.SpawnCell(centerX+offsetX, centerY+offsetY)
 		}
 	}
 }
@@ -189,10 +189,9 @@ func (game *GameOfLife) SaveBoard(name string) {
 
 	// Save the position of the alive cells and found the max and min
 	// of the width and height
-	for i := game.X - 1; i > 0; i-- {
-		for j := game.Y - 1; j > 0; j-- {
-			pos := (i * game.Y) + j
-			if (game.CurrentGen[pos] & 0x01) == 0x01 {
+	for i := game.X - 1; i >= 0; i-- {
+		for j := game.Y - 1; j >= 0; j-- {
+			if game.CellState(i, j) {
 				max_width = math.Max(max_width, float64(i))
 				min_width = math.Min(min_width, float64(i))
 

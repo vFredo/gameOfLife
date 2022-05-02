@@ -34,7 +34,6 @@ go run ./main.go -h
 ## TODO
 - [ ] Cycle through the available presets
 - [ ] The user have to give a new name to the preset created
-- [ ] Center the presets according to the size of the screen
 - [ ] Make presets like the glider, glider gun, pulsar, etc...
 
 ## Inspired
