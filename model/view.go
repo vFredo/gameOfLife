@@ -140,7 +140,7 @@ func (view *View) displayInfo() {
 	width, height := view.screen.Size()
 
 	generationText := fmt.Sprintf(" Generation: %d ", view.game.Generation)
-	firstText := " ENTER: next generation, SPC: play/pause, q/ESC/Ctrl-C: quit, h: hide menu H: hide all info "
+	firstText := " ENTER: next generation, SPC: play/pause, q/ESC/Ctrl-C: quit, h/H: hide menu/ ALL menu info "
 	secondText := " LeftClick: switch state cell, RightClick: reset board  p: create preset c: cycle presets "
 	x, y := 0, 0
 
