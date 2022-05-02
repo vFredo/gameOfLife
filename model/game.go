@@ -193,16 +193,15 @@ func (game *GameOfLife) SaveBoard(name string) {
 		}
 	}
 
-	// FIX: This doesn't work at how it's suposed to, but nevertheless.. it works in most cases xD
-	// To make a smaller preset we have to know the dimentions of the section
+	// To make a smaller preset we have to know the dimensions of the section
 	// that have alive cells on the board; that's why we need the min and max
-	width := uint(max_width - min_width)
-	height := uint(max_height - min_height)
+	width := uint(math.Abs(max_width - min_width)) + 1
+	height := uint(math.Abs(max_height - min_height)) + 1
 
 	// Translate the position of the alive cells to the new smaller board of 'width' 'height'
 	for i := 0; i < len(alive); i++ {
-		alive[i][0] -= width
-		alive[i][1] -= height
+		alive[i][0] -= uint(min_width)
+		alive[i][1] -= uint(min_height)
 	}
 
 	game.PresetManager.CreatePreset(name, alive, width, height)
