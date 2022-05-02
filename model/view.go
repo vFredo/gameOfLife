@@ -18,11 +18,12 @@ var (
 
 // View structure that has the game itself and the screen (terminal buffer) where everything is render
 type View struct {
-	screen   tcell.Screen
-	game     GameOfLife
-	Start    bool
-	hideMenu bool
-	quit     chan struct{}
+	screen      tcell.Screen
+	game        GameOfLife
+	Start       bool
+	hideMenu    bool
+	hideMenuAll bool
+	quit        chan struct{}
 }
 
 // Initialize screen and game itself
@@ -71,10 +72,20 @@ func (view *View) readInput() {
 				view.game.Step()
 			} else if ev.Rune() == 'h' {
 				view.hideMenu = !view.hideMenu
-			} else if ev.Rune() == 'c' {
+				if !view.hideMenu {
+					view.hideMenuAll = false
+				}
+			} else if ev.Rune() == 'H' {
+				view.hideMenuAll = !view.hideMenuAll
+				if view.hideMenuAll {
+					view.hideMenu = true
+				}
+			} else if ev.Rune() == 'p' {
 				if !view.game.Start {
 					view.game.SaveBoard(time.Now().Format("01-06-2006_15:04:05"))
 				}
+			} else if ev.Rune() == 'c' {
+				view.game.CyclePresets()
 			}
 		case *tcell.EventMouse:
 			switch ev.Buttons() {
@@ -129,21 +140,23 @@ func (view *View) displayInfo() {
 	width, height := view.screen.Size()
 
 	generationText := fmt.Sprintf(" Generation: %d ", view.game.Generation)
-	firstText := " ENTER: next generation, SPC: play/pause, q/ESC/Ctrl-C: quit, h: hide menu "
-	secondText := " LeftClick: switch state cell, RightClick: reset board  c: create preset "
+	firstText := " ENTER: next generation, SPC: play/pause, q/ESC/Ctrl-C: quit, h: hide menu H: hide all info "
+	secondText := " LeftClick: switch state cell, RightClick: reset board  p: create preset c: cycle presets "
 	x, y := 0, 0
 
-	if len(firstText) <= width {
+	if len(firstText) <= width && !view.hideMenu {
 		view.renderInfo(x, y, firstText)
 		y += 1
 	}
 
-	if len(secondText) <= width {
+	if len(secondText) <= width && !view.hideMenu {
 		view.renderInfo(x, y, secondText)
 		y += 1
 	}
 
-	view.renderInfo(width-len(generationText), height-1, generationText)
+	if !view.hideMenuAll {
+		view.renderInfo(width-len(generationText), height-1, generationText)
+	}
 }
 
 // Infinite loop for the terminal view buffer where the game is executed
@@ -171,9 +184,7 @@ func (view *View) Run() {
 				time.Sleep(sleepTime)
 			}
 
-			if !view.hideMenu {
-				view.displayInfo()
-			}
+			view.displayInfo()
 			// Update screen
 			view.screen.Show()
 		}
