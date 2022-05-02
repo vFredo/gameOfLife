@@ -1,4 +1,4 @@
-package model
+package view
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/fredo0522/gameOfLife/model/game"
 )
 
 // Styles (uses the terminal colors)
@@ -16,10 +17,10 @@ var (
 	InfoStyle    = tcell.StyleDefault.Background(tcell.ColorGray).Foreground(tcell.ColorWhite)
 )
 
-// View structure that has the game itself and the screen (terminal buffer) where everything is render
-type View struct {
+// TermView structure that has the game itself and the screen (terminal buffer) where everything is render
+type TermView struct {
 	screen      tcell.Screen
-	game        GameOfLife
+	game        game.GameOfLife
 	Start       bool
 	hideMenu    bool
 	hideMenuAll bool
@@ -27,7 +28,7 @@ type View struct {
 }
 
 // Initialize screen and game itself
-func (view *View) InitScreen(game GameOfLife) {
+func (view *TermView) InitScreen(game game.GameOfLife) {
 	screenInstance, err := tcell.NewScreen()
 	if err != nil {
 		log.Fatalf("%+v", err)
@@ -52,7 +53,7 @@ func (view *View) InitScreen(game GameOfLife) {
 }
 
 // Control input (mouse/keyboard) events on the screen
-func (view *View) readInput() {
+func (view *TermView) readInput() {
 	for {
 		// Catch events that are triggered on the buffer
 		ev := view.screen.PollEvent()
@@ -109,7 +110,7 @@ func (view *View) readInput() {
 }
 
 // How each cell is draw on the screen
-func (view *View) displayGame() {
+func (view *TermView) displayGame() {
 	view.screen.Clear()
 	// Death: Background color, AlivePause: blue, AlivePlay: yellow
 	for i := 0; uint(i) < view.game.X; i++ {
@@ -129,14 +130,14 @@ func (view *View) displayGame() {
 }
 
 // Helper method that takes the string (info) and pos [x][y] and put it on the screen
-func (view *View) renderInfo(x int, y int, info string) {
+func (view *TermView) renderInfo(x int, y int, info string) {
 	for i, byte := range info {
 		view.screen.SetCell(x+i, y, InfoStyle, byte)
 	}
 }
 
 // Information shown on the menu
-func (view *View) displayInfo() {
+func (view *TermView) displayInfo() {
 	width, height := view.screen.Size()
 
 	generationText := fmt.Sprintf(" Generation: %d ", view.game.Generation)
@@ -160,7 +161,7 @@ func (view *View) displayInfo() {
 }
 
 // Infinite loop for the terminal view buffer where the game is executed
-func (view *View) Run() {
+func (view *TermView) Run() {
 	// Get the FPS for executing the game while is on a 'start' state
 	framesPerSecond := 15
 	sleepTime := time.Duration(1000/framesPerSecond) * time.Millisecond

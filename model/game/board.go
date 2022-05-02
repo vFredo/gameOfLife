@@ -1,4 +1,4 @@
-package model
+package game
 
 import (
 	"log"
@@ -169,11 +169,11 @@ func (game *GameOfLife) OpenPreset(name string) {
 	centerW := currPreset.Width / 2
 	centerH := currPreset.Height / 2
 
-	for k := 0; k < len(currPreset.AliveCells); k++ {
-		aliveCell := currPreset.AliveCells[k]
+	for i := 0; i < len(currPreset.AliveCells); i++ {
+		aliveCell := currPreset.AliveCells[i]
 		if aliveCell[0] < game.X && aliveCell[1] < game.Y {
 			// Spawn the cells taking into account the offsets of the center of the
-      // preset board and translating the coordinates to the currentGen board
+			// preset board and translating the coordinates to the currentGen board
 			offsetX := centerW - aliveCell[0]
 			offsetY := centerH - aliveCell[1]
 			game.SpawnCell(centerX-offsetX, centerY-offsetY)
