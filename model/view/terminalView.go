@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/gdamore/tcell/v2"
 	"github.com/fredo0522/gameOfLife/model/game"
+	"github.com/gdamore/tcell/v2"
 )
 
 // Styles (uses the terminal colors)
@@ -24,7 +24,7 @@ type TermView struct {
 	Start       bool
 	hideMenu    bool
 	hideMenuAll bool
-	quit        chan struct{}
+	event       chan Event
 }
 
 // Initialize screen and game itself
@@ -39,8 +39,8 @@ func (view *TermView) InitScreen(game game.GameOfLife) {
 		log.Fatalf("%+v", err)
 	}
 
-	// Initialize the signal to quit
-	view.quit = make(chan struct{})
+	// Initialize the user signals
+	view.event = make(chan Event)
 
 	view.screen.SetStyle(DefaultStyle)
 	view.screen.EnableMouse()
@@ -65,7 +65,7 @@ func (view *TermView) readInput() {
 			view.game.Resize(uint(height), uint(width/2))
 		case *tcell.EventKey:
 			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC || ev.Rune() == 'q' {
-				view.quit <- struct{}{}
+				view.event <- Event{Type: QUIT}
 				return
 			} else if ev.Rune() == ' ' { // space
 				view.Start = !view.Start
@@ -160,6 +160,9 @@ func (view *TermView) displayInfo() {
 	}
 }
 
+func (view *TermView) createInput() {
+}
+
 // Infinite loop for the terminal view buffer where the game is executed
 func (view *TermView) Run() {
 	// Get the FPS for executing the game while is on a 'start' state
@@ -172,20 +175,27 @@ func (view *TermView) Run() {
 	for {
 		// Keep running until the user wants to quit the game
 		select {
-		case <-view.quit:
-			// Close the screen
-			view.screen.Clear()
-			view.screen.Fini()
-			return
+		case channelEvent := <-view.event:
+			switch channelEvent.Type {
+			case QUIT:
+				view.screen.Clear()
+				view.screen.Fini()
+				return
+			case INPUT:
+				continue
+			default:
+				continue
+			}
 		default:
 			view.displayGame()
-
 			if view.Start {
 				view.game.Step()
 				time.Sleep(sleepTime)
 			}
 
+			// Display menu
 			view.displayInfo()
+
 			// Update screen
 			view.screen.Show()
 		}
