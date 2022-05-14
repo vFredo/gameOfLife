@@ -33,8 +33,8 @@ go run ./main.go -h
 ```
 
 ## TODO
-- [ ] Get option to the user to put the preset's file name
-- [ ] Show which preset we are at in the moment
+- [ ] The user when saving a preset can give a name to it on the TUI
+- [ ] Show on TUI the current preset
 
 ## Inspired
 - [go-life](https://github.com/sachaos/go-life)
