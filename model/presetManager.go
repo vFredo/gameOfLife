@@ -57,7 +57,7 @@ func (pm *PresetManager) CreatePreset(name string, alive [][]uint, x uint, y uin
 func (pm *PresetManager) GetPreset(name string) (Preset, error) {
 	for i := 0; i < len(pm.Presets); i++ {
 		if pm.Presets[i].Name == name {
-      pm.currPresetIndex = i
+			pm.currPresetIndex = i
 			return pm.Presets[i], nil
 		}
 	}
@@ -66,11 +66,11 @@ func (pm *PresetManager) GetPreset(name string) (Preset, error) {
 
 // Cycle between all available presets in the array Presets
 func (pm *PresetManager) CyclePresets() Preset {
-  if pm.currPresetIndex+1 < len(pm.Presets) {
-    pm.currPresetIndex += 1
-    return pm.Presets[pm.currPresetIndex]
-  } else {
-    pm.currPresetIndex = 0
-    return pm.Presets[pm.currPresetIndex]
-  }
+	if pm.currPresetIndex+1 < len(pm.Presets) {
+		pm.currPresetIndex += 1
+		return pm.Presets[pm.currPresetIndex]
+	} else {
+		pm.currPresetIndex = 0
+		return pm.Presets[pm.currPresetIndex]
+	}
 }

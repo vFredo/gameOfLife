@@ -218,6 +218,6 @@ func (game *GameOfLife) SaveBoard(name string) {
 
 // Cycle through presets that are load on the PresetManager
 func (game *GameOfLife) CyclePresets() {
-  currPreset := game.PresetManager.CyclePresets()
-  game.OpenPreset(currPreset.Name)
+	currPreset := game.PresetManager.CyclePresets()
+	game.OpenPreset(currPreset.Name)
 }
