@@ -1,10 +1,11 @@
-package model
+package view
 
 import (
 	"fmt"
 	"log"
 	"time"
 
+	"github.com/fredo0522/gameOfLife/model/game"
 	"github.com/gdamore/tcell/v2"
 )
 
@@ -16,18 +17,18 @@ var (
 	InfoStyle    = tcell.StyleDefault.Background(tcell.ColorGray).Foreground(tcell.ColorWhite)
 )
 
-// View structure that has the game itself and the screen (terminal buffer) where everything is render
-type View struct {
+// TermView structure that has the game itself and the screen (terminal buffer) where everything is render
+type TermView struct {
 	screen      tcell.Screen
-	game        GameOfLife
+	game        game.GameOfLife
 	Start       bool
 	hideMenu    bool
 	hideMenuAll bool
-	quit        chan struct{}
+	event       chan Event
 }
 
 // Initialize screen and game itself
-func (view *View) InitScreen(game GameOfLife) {
+func (view *TermView) InitScreen(game game.GameOfLife) {
 	screenInstance, err := tcell.NewScreen()
 	if err != nil {
 		log.Fatalf("%+v", err)
@@ -38,8 +39,8 @@ func (view *View) InitScreen(game GameOfLife) {
 		log.Fatalf("%+v", err)
 	}
 
-	// Initialize the signal to quit
-	view.quit = make(chan struct{})
+	// Initialize the user signals
+	view.event = make(chan Event)
 
 	view.screen.SetStyle(DefaultStyle)
 	view.screen.EnableMouse()
@@ -52,7 +53,7 @@ func (view *View) InitScreen(game GameOfLife) {
 }
 
 // Control input (mouse/keyboard) events on the screen
-func (view *View) readInput() {
+func (view *TermView) readInput() {
 	for {
 		// Catch events that are triggered on the buffer
 		ev := view.screen.PollEvent()
@@ -64,7 +65,7 @@ func (view *View) readInput() {
 			view.game.Resize(uint(height), uint(width/2))
 		case *tcell.EventKey:
 			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC || ev.Rune() == 'q' {
-				view.quit <- struct{}{}
+				view.event <- Event{Type: QUIT}
 				return
 			} else if ev.Rune() == ' ' { // space
 				view.Start = !view.Start
@@ -109,7 +110,7 @@ func (view *View) readInput() {
 }
 
 // How each cell is draw on the screen
-func (view *View) displayGame() {
+func (view *TermView) displayGame() {
 	view.screen.Clear()
 	// Death: Background color, AlivePause: blue, AlivePlay: yellow
 	for i := 0; uint(i) < view.game.X; i++ {
@@ -129,18 +130,18 @@ func (view *View) displayGame() {
 }
 
 // Helper method that takes the string (info) and pos [x][y] and put it on the screen
-func (view *View) renderInfo(x int, y int, info string) {
+func (view *TermView) renderInfo(x int, y int, info string) {
 	for i, byte := range info {
 		view.screen.SetCell(x+i, y, InfoStyle, byte)
 	}
 }
 
 // Information shown on the menu
-func (view *View) displayInfo() {
+func (view *TermView) displayInfo() {
 	width, height := view.screen.Size()
 
 	generationText := fmt.Sprintf(" Generation: %d ", view.game.Generation)
-	firstText := " ENTER: next generation, SPC: play/pause, q/ESC/Ctrl-C: quit, h: hide menu H: hide all info "
+	firstText := " ENTER: next generation, SPC: play/pause, q/ESC/Ctrl-C: quit, h/H: hide menu/ ALL menu info "
 	secondText := " LeftClick: switch state cell, RightClick: reset board  p: create preset c: cycle presets "
 	x, y := 0, 0
 
@@ -159,8 +160,11 @@ func (view *View) displayInfo() {
 	}
 }
 
+func (view *TermView) createInput() {
+}
+
 // Infinite loop for the terminal view buffer where the game is executed
-func (view *View) Run() {
+func (view *TermView) Run() {
 	// Get the FPS for executing the game while is on a 'start' state
 	framesPerSecond := 15
 	sleepTime := time.Duration(1000/framesPerSecond) * time.Millisecond
@@ -171,20 +175,27 @@ func (view *View) Run() {
 	for {
 		// Keep running until the user wants to quit the game
 		select {
-		case <-view.quit:
-			// Close the screen
-			view.screen.Clear()
-			view.screen.Fini()
-			return
+		case channelEvent := <-view.event:
+			switch channelEvent.Type {
+			case QUIT:
+				view.screen.Clear()
+				view.screen.Fini()
+				return
+			case INPUT:
+				continue
+			default:
+				continue
+			}
 		default:
 			view.displayGame()
-
 			if view.Start {
 				view.game.Step()
 				time.Sleep(sleepTime)
 			}
 
+			// Display menu
 			view.displayInfo()
+
 			// Update screen
 			view.screen.Show()
 		}

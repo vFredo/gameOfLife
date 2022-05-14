@@ -13,7 +13,7 @@ language. Read more about the [Game of Life](https://en.wikipedia.org/wiki/Conwa
    | `LeftClick`                | Toggle cell state spawn/kill on pause         |
    | `RightClick`               | Clear board                                   |
    | `q` or `Esc` or `Ctrl + c` | Exit the game                                 |
-   | `h`                        | Hide information menu                         |
+   | `h` or `H`                 | Hide information menu or all of it            |
    | `p`                        | Create a preset on pause of the current board |
    | `c`                        | Cycle through the presets available           |
 

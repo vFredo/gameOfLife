@@ -4,7 +4,8 @@ import (
 	"flag"
 	"os"
 
-	"github.com/fredo0522/gameOfLife/model"
+	"github.com/fredo0522/gameOfLife/model/game"
+	"github.com/fredo0522/gameOfLife/model/view"
 )
 
 func main() {
@@ -18,7 +19,7 @@ func main() {
 	flag.Parse()
 
 	// Game instance
-	game := model.GameOfLife{
+	game := game.GameOfLife{
 		BirthCell:       *birth,
 		OverPopulation:  *over,
 		UnderPopulation: *under,
@@ -27,7 +28,7 @@ func main() {
 	}
 
 	// Execute the view buffer on the terminal and initialize game
-	view := model.View{}
+	view := view.TermView{}
 	view.InitScreen(game)
 	view.Run()
 

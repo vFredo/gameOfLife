@@ -1,4 +1,4 @@
-package model
+package game
 
 import (
 	"errors"
@@ -65,12 +65,16 @@ func (pm *PresetManager) GetPreset(name string) (Preset, error) {
 }
 
 // Cycle between all available presets in the array Presets
-func (pm *PresetManager) CyclePresets() Preset {
+func (pm *PresetManager) CyclePresets() (Preset, error) {
 	if pm.currPresetIndex+1 < len(pm.Presets) {
 		pm.currPresetIndex += 1
-		return pm.Presets[pm.currPresetIndex]
 	} else {
 		pm.currPresetIndex = 0
-		return pm.Presets[pm.currPresetIndex]
 	}
+
+	if len(pm.Presets) == 0 {
+		return Preset{}, errors.New("there are no presets loaded in the PresetManager")
+	}
+
+	return pm.Presets[pm.currPresetIndex], nil
 }

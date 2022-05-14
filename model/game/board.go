@@ -1,4 +1,4 @@
-package model
+package game
 
 import (
 	"log"
@@ -169,11 +169,11 @@ func (game *GameOfLife) OpenPreset(name string) {
 	centerW := currPreset.Width / 2
 	centerH := currPreset.Height / 2
 
-	for k := 0; k < len(currPreset.AliveCells); k++ {
-		aliveCell := currPreset.AliveCells[k]
+	for i := 0; i < len(currPreset.AliveCells); i++ {
+		aliveCell := currPreset.AliveCells[i]
 		if aliveCell[0] < game.X && aliveCell[1] < game.Y {
-			// Spawn the cells taking into account the offsets of the center of the preset board
-			// and translating the coordinates to the currentGen board
+			// Spawn the cells taking into account the offsets of the center of the
+			// preset board and translating the coordinates to the currentGen board
 			offsetX := centerW - aliveCell[0]
 			offsetY := centerH - aliveCell[1]
 			game.SpawnCell(centerX-offsetX, centerY-offsetY)
@@ -183,34 +183,35 @@ func (game *GameOfLife) OpenPreset(name string) {
 
 // Save the current board as a json file with the name given
 func (game *GameOfLife) SaveBoard(name string) {
-	max_width, max_height := math.Inf(-1), math.Inf(-1)
-	min_width, min_height := math.Inf(1), math.Inf(1)
+	maxWidth, maxHeight := math.Inf(-1), math.Inf(-1)
+	minWidth, minHeight := math.Inf(1), math.Inf(1)
 	var alive [][]uint
 
 	// Save the position of the alive cells and found the max and min
 	// of the width and height
-	for i := game.X - 1; i > 0; i-- {
-		for j := game.Y - 1; j > 0; j-- {
+	for i := uint(0); i < game.X; i++ {
+		for j := uint(0); j < game.Y; j++ {
 			if game.CellState(i, j) {
-				max_width = math.Max(max_width, float64(i))
-				min_width = math.Min(min_width, float64(i))
+				maxWidth = math.Max(maxWidth, float64(i))
+				minWidth = math.Min(minWidth, float64(i))
 
-				max_height = math.Max(max_height, float64(j))
-				min_height = math.Min(min_height, float64(j))
+				maxHeight = math.Max(maxHeight, float64(j))
+				minHeight = math.Min(minHeight, float64(j))
 				alive = append(alive, []uint{i, j})
 			}
+
 		}
 	}
 
 	// To make a smaller preset we have to know the dimensions of the section
 	// that have alive cells on the board; that's why we need the min and max
-	width := uint(max_width-min_width) + 1
-	height := uint(max_height-min_height) + 1
+	width := uint(maxWidth-minWidth) + 1
+	height := uint(maxHeight-minHeight) + 1
 
 	// Translate the position of the alive cells to the new smaller board of 'width' 'height'
 	for i := 0; i < len(alive); i++ {
-		alive[i][0] -= uint(min_width)
-		alive[i][1] -= uint(min_height)
+		alive[i][0] -= uint(minWidth)
+		alive[i][1] -= uint(minHeight)
 	}
 
 	game.PresetManager.CreatePreset(name, alive, width, height)
@@ -218,6 +219,9 @@ func (game *GameOfLife) SaveBoard(name string) {
 
 // Cycle through presets that are load on the PresetManager
 func (game *GameOfLife) CyclePresets() {
-	currPreset := game.PresetManager.CyclePresets()
+	currPreset, err := game.PresetManager.CyclePresets()
+	if err != nil {
+		log.Fatal(err)
+	}
 	game.OpenPreset(currPreset.Name)
 }
