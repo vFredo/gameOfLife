@@ -24,7 +24,7 @@ type TermView struct {
 	Start       bool
 	hideMenu    bool
 	hideMenuAll bool
-	event       chan Event
+	event       Event
 }
 
 // Initialize screen and game itself
@@ -40,7 +40,7 @@ func (view *TermView) InitScreen(game game.GameOfLife) {
 	}
 
 	// Initialize the user signals
-	view.event = make(chan Event)
+	view.event = Event{Type: RUNNING}
 
 	view.screen.SetStyle(DefaultStyle)
 	view.screen.EnableMouse()
@@ -65,7 +65,7 @@ func (view *TermView) readInput() {
 			view.game.Resize(uint(height), uint(width/2))
 		case *tcell.EventKey:
 			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC || ev.Rune() == 'q' {
-				view.event <- Event{Type: QUIT}
+				view.event.SetType(QUIT)
 				return
 			} else if ev.Rune() == ' ' { // space
 				view.Start = !view.Start
@@ -83,7 +83,8 @@ func (view *TermView) readInput() {
 				}
 			} else if ev.Rune() == 'p' {
 				if !view.game.Start {
-					view.game.SaveBoard(time.Now().Format("01-06-2006_15:04:05"))
+					view.event.SetType(PAUSE)
+					view.inputFormPreset()
 				}
 			} else if ev.Rune() == 'c' {
 				view.game.CyclePresets()
@@ -107,6 +108,40 @@ func (view *TermView) readInput() {
 			}
 		}
 	}
+}
+
+// Create the input form so that the user can put a name into the new created preset
+func (view *TermView) inputFormPreset() {
+	width, height := view.screen.Size()
+	label := " Preset name: "
+	namePreset := ""
+
+	for {
+		view.renderInfo(width/2, height/2, label+namePreset)
+
+		ev := view.screen.PollEvent()
+		switch ev := ev.(type) {
+		case *tcell.EventKey:
+			if ev.Key() == tcell.KeyEscape {
+				return
+			} else if ev.Key() == tcell.KeyBackspace || ev.Key() == tcell.KeyBackspace2 {
+				if len(namePreset) > 0 {
+					// view.renderInfo(width/2, height/2, label+namePreset)
+					namePreset = namePreset[:len(namePreset)-1]
+				}
+			} else if ev.Key() == tcell.KeyEnter {
+				if namePreset == "" {
+					namePreset = time.Now().Format("01-06-2006_15:04:05")
+				}
+				view.game.SaveBoard(namePreset)
+				view.event.SetType(RUNNING)
+				return
+			} else {
+				namePreset += string(ev.Rune())
+			}
+		}
+	}
+
 }
 
 // How each cell is draw on the screen
@@ -160,9 +195,6 @@ func (view *TermView) displayInfo() {
 	}
 }
 
-func (view *TermView) createInput() {
-}
-
 // Infinite loop for the terminal view buffer where the game is executed
 func (view *TermView) Run() {
 	// Get the FPS for executing the game while is on a 'start' state
@@ -173,31 +205,25 @@ func (view *TermView) Run() {
 	go view.readInput()
 
 	for {
-		// Keep running until the user wants to quit the game
-		select {
-		case channelEvent := <-view.event:
-			switch channelEvent.Type {
-			case QUIT:
-				view.screen.Clear()
-				view.screen.Fini()
-				return
-			case INPUT:
-				continue
-			default:
-				continue
-			}
-		default:
+		switch view.event.GetType() {
+		case QUIT:
+			view.screen.Clear()
+			view.screen.Fini()
+			return
+		case PAUSE:
+			// Update screen
+			view.screen.Show()
+		case RUNNING:
 			view.displayGame()
 			if view.Start {
 				view.game.Step()
 				time.Sleep(sleepTime)
 			}
-
-			// Display menu
+			// Display information menu and update the screen
 			view.displayInfo()
-
-			// Update screen
 			view.screen.Show()
+		default:
+			continue
 		}
 	}
 }
