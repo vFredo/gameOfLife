@@ -34,6 +34,7 @@ go run ./main.go -h
 
 ## TODO
 - [ ] Show on TUI the current preset
+- [ ] Make a menu to select the preset that the user wants to run
 
 ## Inspired
 - [go-life](https://github.com/sachaos/go-life)
