@@ -52,6 +52,40 @@ func (view *TermView) InitScreen(game game.GameOfLife) {
 	view.game.Init(uint(height), uint(width/2))
 }
 
+// Helper method that render text on the screen
+func (view *TermView) renderText(x int, y int, info string) {
+	for i, char := range info {
+		view.screen.SetContent(x+i, y, char, nil, InfoStyle)
+	}
+}
+
+// Helper method to render the input box on the screen
+func (view *TermView) renderInput(currName string) {
+	label := " Preset name: "
+	border := ""
+	width, height := view.screen.Size()
+
+	// Initialize borders
+	sizeBox := 3*(width/4) - width/4
+	for i := 0; i < sizeBox; i++ {
+		border += "-"
+	}
+
+	// Top border
+	view.renderText(width/4, (height/2)-1, border)
+	// Center input
+	middleText := "|" + label + currName
+	for i := len(middleText); i < sizeBox-1; i++ {
+		middleText += " "
+	}
+	middleText += "|"
+  if len(middleText) <= sizeBox {
+    view.renderText(width/4, height/2, middleText)
+  }
+	// Bottom Border
+	view.renderText(width/4, (height/2)+1, border)
+}
+
 // Control input (mouse/keyboard) events on the screen
 func (view *TermView) readInput() {
 	for {
@@ -110,26 +144,25 @@ func (view *TermView) readInput() {
 	}
 }
 
-// Create the input form so that the user can put a name into the new created preset
+// Manage events of the input form when the user wants to save a preset
 func (view *TermView) inputFormPreset() {
-	width, height := view.screen.Size()
-	label := " Preset name: "
 	namePreset := ""
 
 	for {
-		view.renderInfo(width/2, height/2, label+namePreset)
+		view.renderInput(namePreset)
 
 		ev := view.screen.PollEvent()
 		switch ev := ev.(type) {
 		case *tcell.EventKey:
 			if ev.Key() == tcell.KeyEscape {
+				view.event.SetType(RUNNING)
 				return
 			} else if ev.Key() == tcell.KeyBackspace || ev.Key() == tcell.KeyBackspace2 {
 				if len(namePreset) > 0 {
-					// view.renderInfo(width/2, height/2, label+namePreset)
 					namePreset = namePreset[:len(namePreset)-1]
 				}
 			} else if ev.Key() == tcell.KeyEnter {
+				// If the preset doesn't have a name, put the current date and time
 				if namePreset == "" {
 					namePreset = time.Now().Format("01-06-2006_15:04:05")
 				}
@@ -141,7 +174,6 @@ func (view *TermView) inputFormPreset() {
 			}
 		}
 	}
-
 }
 
 // How each cell is draw on the screen
@@ -161,13 +193,6 @@ func (view *TermView) displayGame() {
 				view.screen.SetContent(j*2+1, i, ' ', nil, DefaultStyle)
 			}
 		}
-	}
-}
-
-// Helper method that takes the string (info) and pos [x][y] and put it on the screen
-func (view *TermView) renderInfo(x int, y int, info string) {
-	for i, byte := range info {
-		view.screen.SetCell(x+i, y, InfoStyle, byte)
 	}
 }
 
