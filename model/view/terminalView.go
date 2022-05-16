@@ -39,7 +39,7 @@ func (view *TermView) InitScreen(game game.GameOfLife) {
 		log.Fatalf("%+v", err)
 	}
 
-	// Initialize the user signals
+	// Initialize the user event
 	view.event = Event{Type: RUNNING}
 
 	view.screen.SetStyle(DefaultStyle)
@@ -180,18 +180,20 @@ func (view *TermView) displayInfo() {
 	secondText := " LeftClick: switch state cell, RightClick: reset board  p: create preset c: cycle presets "
 	x, y := 0, 0
 
-	if len(firstText) <= width && !view.hideMenu {
-		view.renderInfo(x, y, firstText)
-		y += 1
-	}
+	if !view.hideMenu {
+		if len(firstText) <= width {
+			view.renderText(x, y, firstText)
+			y += 1
+		}
 
-	if len(secondText) <= width && !view.hideMenu {
-		view.renderInfo(x, y, secondText)
-		y += 1
+		if len(secondText) <= width {
+			view.renderText(x, y, secondText)
+			y += 1
+		}
 	}
 
 	if !view.hideMenuAll {
-		view.renderInfo(width-len(generationText), height-1, generationText)
+		view.renderText(width-len(generationText), height-1, generationText)
 	}
 }
 
@@ -206,13 +208,6 @@ func (view *TermView) Run() {
 
 	for {
 		switch view.event.GetType() {
-		case QUIT:
-			view.screen.Clear()
-			view.screen.Fini()
-			return
-		case PAUSE:
-			// Update screen
-			view.screen.Show()
 		case RUNNING:
 			view.displayGame()
 			if view.Start {
@@ -222,8 +217,13 @@ func (view *TermView) Run() {
 			// Display information menu and update the screen
 			view.displayInfo()
 			view.screen.Show()
-		default:
-			continue
+		case QUIT:
+			view.screen.Clear()
+			view.screen.Fini()
+			return
+		case PAUSE:
+			// Update screen
+			view.screen.Show()
 		}
 	}
 }
