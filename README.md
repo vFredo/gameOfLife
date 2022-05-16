@@ -33,7 +33,6 @@ go run ./main.go -h
 ```
 
 ## TODO
-- [ ] The user when saving a preset can give a name to it on the TUI
 - [ ] Show on TUI the current preset
 
 ## Inspired
