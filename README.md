@@ -35,6 +35,7 @@ go run ./main.go -h
 ## TODO
 - [ ] Show on TUI the current preset
 - [ ] Make a menu to select the preset that the user wants to run
+- [ ] Use tick() so the refresh rate of the screen doesn't change between other screens
 
 ## Inspired
 - [go-life](https://github.com/sachaos/go-life)
