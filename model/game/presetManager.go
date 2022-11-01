@@ -17,12 +17,12 @@ type PresetManager struct {
 func (pm *PresetManager) FetchPresets() {
 	files, err := os.ReadDir(PRESET_FOLDER)
 	if err != nil {
-		log.Fatalf("Can't read folder presets: %s", err)
+		log.Printf("Can't read folder presets: %s", err)
 	}
 	for _, file := range files {
 		content, err := os.ReadFile(PRESET_FOLDER + file.Name())
 		if err != nil {
-			log.Fatalf("Error when openning file '%s': %s", file.Name(), err)
+			log.Printf("Error when openning file '%s': %s", file.Name(), err)
 		}
 
 		var newPreset Preset
@@ -46,7 +46,7 @@ func (pm *PresetManager) CreatePreset(name string, alive [][]uint, x uint, y uin
 	// Saving preset on PRESET_FOLDER
 	file, err := os.OpenFile(PRESET_FOLDER+name+".json", os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
-		log.Fatalf("Error occurred while open/created file %s: %s", name, err)
+		log.Printf("Error occurred while open/created file %s: %s", name, err)
 	}
 	defer file.Close()
 	file.Write(encodedPreset)

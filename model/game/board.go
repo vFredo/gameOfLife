@@ -159,7 +159,7 @@ func (game *GameOfLife) OpenPreset(name string) {
 
 	currPreset, err := game.PresetManager.GetPreset(name)
 	if err != nil {
-		log.Fatalf("Error while getting preset: %s", err)
+		log.Printf("Error while getting preset: %s", err)
 	}
 	// CurrentGen center
 	centerX := game.X / 2
@@ -220,7 +220,7 @@ func (game *GameOfLife) SaveBoard(name string) {
 func (game *GameOfLife) CyclePresets() {
 	currPreset, err := game.PresetManager.CyclePresets()
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("%+v", err)
 	}
 	game.OpenPreset(currPreset.Name)
 }

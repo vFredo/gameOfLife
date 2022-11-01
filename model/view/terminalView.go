@@ -21,6 +21,7 @@ var (
 type TermView struct {
 	screen      tcell.Screen
 	game        game.GameOfLife
+	ticker      *time.Ticker
 	Start       bool
 	hideMenu    bool
 	hideMenuAll bool
@@ -31,13 +32,16 @@ type TermView struct {
 func (view *TermView) InitScreen(game game.GameOfLife) {
 	screenInstance, err := tcell.NewScreen()
 	if err != nil {
-		log.Fatalf("%+v", err)
+		log.Printf("%+v", err)
 	}
 	view.screen = screenInstance
 
 	if err := view.screen.Init(); err != nil {
-		log.Fatalf("%+v", err)
+		log.Printf("%+v", err)
 	}
+
+	// Initialize ticker
+	view.ticker = time.NewTicker(50 * time.Millisecond)
 
 	// Initialize the user event
 	view.event = Event{Type: RUNNING}
@@ -109,23 +113,19 @@ func (view *TermView) displayInfo() {
 
 // Infinite loop for the terminal view buffer where the game is executed
 func (view *TermView) Run() {
-	// init ticker
-	ticker := time.NewTicker(50 * time.Millisecond)
-	defer ticker.Stop()
-
 	// Read input in another routine
 	go readInput(view)
+
 	for {
 		switch view.event.GetType() {
 		case RUNNING:
 			select {
-			case <-ticker.C:
-				view.displayGame()
+			case <-view.ticker.C:
 				if view.Start {
 					view.game.Step()
 				}
-				// Display information menu and update the screen
-				view.displayInfo()
+				view.displayGame()
+				view.displayInfo() // Display information menu and update the screen
 				view.screen.Show()
 			default:
 				continue
@@ -133,6 +133,7 @@ func (view *TermView) Run() {
 		case PAUSE:
 			view.screen.Show() // update screen to pause mode
 		case QUIT:
+			view.ticker.Stop()
 			view.screen.Clear()
 			view.screen.Fini()
 			return

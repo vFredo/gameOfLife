@@ -17,7 +17,7 @@ func (p *Preset) EncodeToJson() []byte {
 	// MarshalIndent to format the output
 	encodedPreset, err := json.MarshalIndent(p, "", "  ")
 	if err != nil {
-		log.Fatalf("Error occurred encoding struct Preset: %s", err.Error())
+		log.Printf("Error occurred encoding struct Preset: %s", err.Error())
 	}
 	return encodedPreset
 }
@@ -26,6 +26,6 @@ func (p *Preset) EncodeToJson() []byte {
 func (p *Preset) DecodeFromJson(buffer []byte) {
 	err := json.Unmarshal(buffer, &p)
 	if err != nil {
-		log.Fatalf("Error occurred decoding the json file: %s", err.Error())
+		log.Printf("Error occurred decoding the json file: %s", err.Error())
 	}
 }
