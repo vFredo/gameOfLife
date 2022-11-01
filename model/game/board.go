@@ -207,7 +207,7 @@ func (game *GameOfLife) SaveBoard(name string) {
 	width := uint(maxWidth-minWidth) + 1
 	height := uint(maxHeight-minHeight) + 1
 
-	// Translate the position of the alive cells to the new smaller board of 'width' 'height'
+	// Translate the position of the alive cells to the new smaller board of 'width'x'height'
 	for i := 0; i < len(alive); i++ {
 		alive[i][0] -= uint(minWidth)
 		alive[i][1] -= uint(minHeight)
