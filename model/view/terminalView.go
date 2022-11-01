@@ -109,30 +109,33 @@ func (view *TermView) displayInfo() {
 
 // Infinite loop for the terminal view buffer where the game is executed
 func (view *TermView) Run() {
-	// Get the FPS for executing the game while is on a 'start' state
-	framesPerSecond := 15
-	sleepTime := time.Duration(1000/framesPerSecond) * time.Millisecond
+	// init ticker
+	ticker := time.NewTicker(50 * time.Millisecond)
+	defer ticker.Stop()
 
 	// Read input in another routine
-	go view.readInput()
+	go readInput(view)
 	for {
 		switch view.event.GetType() {
 		case RUNNING:
-			view.displayGame()
-			if view.Start {
-				view.game.Step()
-				time.Sleep(sleepTime)
+			select {
+			case <-ticker.C:
+				view.displayGame()
+				if view.Start {
+					view.game.Step()
+				}
+				// Display information menu and update the screen
+				view.displayInfo()
+				view.screen.Show()
+			default:
+				continue
 			}
-			// Display information menu and update the screen
-			view.displayInfo()
-			view.screen.Show()
+		case PAUSE:
+			view.screen.Show() // update screen to pause mode
 		case QUIT:
 			view.screen.Clear()
 			view.screen.Fini()
 			return
-		case PAUSE:
-			// Update screen
-			view.screen.Show()
 		}
 	}
 }
