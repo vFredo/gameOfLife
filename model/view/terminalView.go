@@ -79,9 +79,9 @@ func (view *TermView) renderInput(currName string) {
 		middleText += " "
 	}
 	middleText += "|"
-  if len(middleText) <= sizeBox {
-    view.renderText(width/4, height/2, middleText)
-  }
+	if len(middleText) <= sizeBox {
+		view.renderText(width/4, height/2, middleText)
+	}
 	// Bottom Border
 	view.renderText(width/4, (height/2)+1, border)
 }
@@ -201,8 +201,10 @@ func (view *TermView) displayInfo() {
 	width, height := view.screen.Size()
 
 	generationText := fmt.Sprintf(" Generation: %d ", view.game.Generation)
-	firstText := " ENTER: next generation, SPC: play/pause, q/ESC/Ctrl-C: quit, h/H: hide menu/ ALL menu info "
-	secondText := " LeftClick: switch state cell, RightClick: reset board  p: create preset c: cycle presets "
+	firstText :=
+		" ENTER: next generation, SPC: play/pause, q/ESC/Ctrl-C: quit, h/H: hide menu/ ALL menu info "
+	secondText :=
+		" LeftClick: switch state cell, RightClick: reset board  p: create preset c: cycle presets "
 	x, y := 0, 0
 
 	if !view.hideMenu {
@@ -230,7 +232,6 @@ func (view *TermView) Run() {
 
 	// Read input in another routine
 	go view.readInput()
-
 	for {
 		switch view.event.GetType() {
 		case RUNNING:

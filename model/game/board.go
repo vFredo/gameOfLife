@@ -181,7 +181,7 @@ func (game *GameOfLife) OpenPreset(name string) {
 	}
 }
 
-// Save the current board as a json file with the name given
+// Save the current board as a json file (Preset) with the name given
 func (game *GameOfLife) SaveBoard(name string) {
 	maxWidth, maxHeight := math.Inf(-1), math.Inf(-1)
 	minWidth, minHeight := math.Inf(1), math.Inf(1)
@@ -199,7 +199,6 @@ func (game *GameOfLife) SaveBoard(name string) {
 				minHeight = math.Min(minHeight, float64(j))
 				alive = append(alive, []uint{i, j})
 			}
-
 		}
 	}
 

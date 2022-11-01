@@ -2,7 +2,6 @@ package game
 
 import (
 	"errors"
-	"io/ioutil"
 	"log"
 	"os"
 )
@@ -16,12 +15,12 @@ type PresetManager struct {
 
 // Load all presets on the PRESET_FOLDER directory
 func (pm *PresetManager) FetchPresets() {
-	files, err := ioutil.ReadDir(PRESET_FOLDER)
+	files, err := os.ReadDir(PRESET_FOLDER)
 	if err != nil {
 		log.Fatalf("Can't read folder presets: %s", err)
 	}
 	for _, file := range files {
-		content, err := ioutil.ReadFile(PRESET_FOLDER + file.Name())
+		content, err := os.ReadFile(PRESET_FOLDER + file.Name())
 		if err != nil {
 			log.Fatalf("Error when openning file '%s': %s", file.Name(), err)
 		}

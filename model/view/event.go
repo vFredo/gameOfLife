@@ -5,7 +5,7 @@ import "sync"
 const (
 	QUIT    = "quit"
 	PAUSE   = "pause"
-	RUNNING = "Running"
+	RUNNING = "running"
 )
 
 type Event struct {
