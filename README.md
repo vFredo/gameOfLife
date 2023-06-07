@@ -32,10 +32,6 @@ the behavior of the game. You can see all the options by doing:
 go run ./main.go -h
 ```
 
-## TODO
-- [ ] Show on TUI the current preset
-- [ ] Make a menu to select the preset that the user wants to run
-
 ## Inspired
 - [go-life](https://github.com/sachaos/go-life)
 - [Michael Abrash's Graphics Programming Black Book (1997)](http://www.jagregory.com/abrash-black-book/)
